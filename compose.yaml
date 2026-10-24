@@ -1,0 +1,9 @@
+﻿name: elkollege-admissions-bot
+
+services:
+  elkollege-admissions-bot:
+    container_name: ElkollegeAdmissionsBot
+    image: elkollege-admissions-bot
+    build:
+      context: .
+      dockerfile: Dockerfile

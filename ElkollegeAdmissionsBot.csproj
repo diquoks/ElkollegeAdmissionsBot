@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>dotnet-ElkollegeAdmissionsBot-4718bd31-417d-4405-8e32-f2e519aa5883</UserSecretsId>
+        <NoDefaultLaunchSettingsFile>True</NoDefaultLaunchSettingsFile>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="MaxMessenger.Bot" Version="0.7.0-alpha" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.13" />
+        <PackageReference Include="Telegram.BotAPI" Version="10.3.1" />
+        <PackageReference Include="Telegram.BotAPI.Extensions" Version="0.8.2" />
+    </ItemGroup>
+</Project>
