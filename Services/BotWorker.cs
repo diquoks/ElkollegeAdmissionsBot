@@ -5,16 +5,14 @@ public abstract class BotWorker<THandler>(ILogger logger, IBot<THandler> bot)
 {
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        if (logger.IsEnabled(LogLevel.Information))
-            logger.LogInformation("Worker started.");
+        logger.LogInformation("Worker started.");
 
         return bot.PrepareAsync(stoppingToken);
     }
 
     public override Task StopAsync(CancellationToken cancellationToken)
     {
-        if (logger.IsEnabled(LogLevel.Information))
-            logger.LogInformation("Worker is stopping...");
+        logger.LogInformation("Worker is stopping...");
 
         return base.StopAsync(cancellationToken);
     }
