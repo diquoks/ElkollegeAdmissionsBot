@@ -1,19 +1,18 @@
 namespace ElkollegeAdmissionsBot.Services.Max;
 
-public class MaxWorker(ILogger<MaxWorker> logger, MaxBot bot) : BotWorker<MaxBot, MaxHandler>(logger, bot)
+public class MaxBotWorker(ILogger<MaxBotWorker> logger, MaxBot bot, MaxBotClient client)
+    : BotWorker<MaxBotHandler>(logger, bot)
 {
-    private readonly MaxBot _bot = bot;
-
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         await base.ExecuteAsync(stoppingToken);
 
-        await _bot.Handler.Client.StartPollingAsync(_bot, cancellationToken: stoppingToken);
+        await client.Implementation.StartPollingAsync(bot, cancellationToken: stoppingToken);
     }
 
     public override async Task StopAsync(CancellationToken cancellationToken)
     {
-        await _bot.Handler.Client.StopPollingAsync(cancellationToken);
+        await client.Implementation.StopPollingAsync(cancellationToken);
 
         await base.StopAsync(cancellationToken);
     }

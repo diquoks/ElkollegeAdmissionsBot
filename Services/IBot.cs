@@ -1,6 +1,6 @@
 namespace ElkollegeAdmissionsBot.Services;
 
-public interface IBot<out THandler> where THandler : Handler
+public interface IBot<out THandler> where THandler : BotHandler
 {
     public THandler Handler { get; }
 

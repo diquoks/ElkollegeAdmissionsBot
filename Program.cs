@@ -9,15 +9,18 @@ public static class Program
     {
         var builder = Host.CreateApplicationBuilder(args);
         builder.Services
-            .Configure<MaxHandlerOptions>(builder.Configuration.GetSection(MaxHandler.Section))
-            .Configure<TelegramHandlerOptions>(builder.Configuration.GetSection(TelegramHandler.Section));
+            .Configure<MaxBotOptions>(builder.Configuration.GetSection(MaxBotOptions.Section))
+            .Configure<TelegramBotOptions>(builder.Configuration.GetSection(TelegramBotOptions.Section));
         builder.Services
-            .AddSingleton<MaxHandler>()
+            .AddSingleton<MaxBotClient>()
+            .AddSingleton<MaxBotHandler>()
             .AddSingleton<MaxBot>()
-            .AddSingleton<TelegramHandler>()
-            .AddSingleton<TelegramBot>()
-            .AddHostedService<MaxWorker>()
-            .AddHostedService<TelegramWorker>();
+            .AddSingleton<TelegramBotClient>()
+            .AddSingleton<TelegramBotHandler>()
+            .AddSingleton<TelegramBot>();
+        builder.Services
+            .AddHostedService<MaxBotWorker>()
+            .AddHostedService<TelegramBotWorker>();
 
         using var host = builder.Build();
         await host.RunAsync();

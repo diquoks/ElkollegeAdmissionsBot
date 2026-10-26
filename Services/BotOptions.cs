@@ -1,7 +1,9 @@
 namespace ElkollegeAdmissionsBot.Services;
 
-public abstract record HandlerOptions
+public abstract record BotOptions
 {
+    public const int LongPollingTimeoutSeconds = 30;
+
     public required string BotToken
     {
         get

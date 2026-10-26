@@ -1,6 +1,5 @@
 using ElkollegeAdmissionsBot.Models.Bot;
 using Microsoft.Extensions.Options;
-using Telegram.BotAPI;
 using Telegram.BotAPI.AvailableMethods;
 using Telegram.BotAPI.AvailableTypes;
 using Telegram.BotAPI.Extensions.LongPolling;
@@ -9,31 +8,26 @@ using BotCommand = ElkollegeAdmissionsBot.Models.Bot.BotCommand;
 
 namespace ElkollegeAdmissionsBot.Services.Telegram;
 
-public class TelegramHandler(ILogger<TelegramHandler> logger, IOptions<TelegramHandlerOptions> options)
-    : Handler(logger)
+public class TelegramBotClient(IOptions<TelegramBotOptions> options) : IBotClient
 {
-    public const string Section = "Telegram";
-
     public static LongPollingOptions LongPollingOptions { get; } = new()
     {
         AllowedUpdates = [UpdateTypes.Message, UpdateTypes.CallbackQuery],
-        Timeout = LongPollingTimeoutSeconds
+        Timeout = BotOptions.LongPollingTimeoutSeconds
     };
 
-    public TelegramBotClient Client { get; } = new(options.Value.BotToken);
+    public global::Telegram.BotAPI.TelegramBotClient Implementation { get; } = new(options.Value.BotToken);
 
-    protected override async Task<BotUser> GetMeAsync(CancellationToken cancellationToken = default)
+    public async Task<BotUser> GetMeAsync(CancellationToken cancellationToken = default)
     {
-        var botUser = await Client.GetMeAsync(cancellationToken);
+        var botUser = await Implementation.GetMeAsync(cancellationToken);
 
         return BotUser.FromTelegram(botUser);
     }
 
-    protected override async Task SetMyCommandsAsync(
-        BotCommand[] commands,
-        CancellationToken cancellationToken = default)
+    public async Task SetMyCommandsAsync(BotCommand[] commands, CancellationToken cancellationToken = default)
     {
-        await Client.SetMyCommandsAsync(
+        await Implementation.SetMyCommandsAsync(
             commands.Select(command => command.ToTelegram()),
             new BotCommandScopeAllPrivateChats(),
             cancellationToken: cancellationToken);

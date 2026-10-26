@@ -1,7 +1,7 @@
 namespace ElkollegeAdmissionsBot.Services;
 
-public abstract class BotWorker<TBot, THandler>(ILogger<BotWorker<TBot, THandler>> logger, TBot bot)
-    : BackgroundService where TBot : IBot<THandler> where THandler : Handler
+public abstract class BotWorker<THandler>(ILogger logger, IBot<THandler> bot)
+    : BackgroundService where THandler : BotHandler
 {
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {

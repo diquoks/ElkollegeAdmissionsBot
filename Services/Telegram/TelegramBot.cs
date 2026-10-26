@@ -4,10 +4,10 @@ using Telegram.BotAPI.GettingUpdates;
 
 namespace ElkollegeAdmissionsBot.Services.Telegram;
 
-public class TelegramBot(ILogger<TelegramBot> logger, TelegramHandler handler)
-    : SimpleUpdateHandlerBase, IBot<TelegramHandler>
+public class TelegramBot(ILogger<TelegramBot> logger, TelegramBotHandler handler)
+    : SimpleUpdateHandlerBase, IBot<TelegramBotHandler>
 {
-    public TelegramHandler Handler { get; } = handler;
+    public TelegramBotHandler Handler { get; } = handler;
 
     public async Task PrepareAsync(CancellationToken cancellationToken = default)
     {
