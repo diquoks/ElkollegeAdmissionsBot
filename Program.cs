@@ -13,10 +13,10 @@ public static class Program
             .Configure<TelegramBotOptions>(builder.Configuration.GetSection(TelegramBotOptions.Section));
         builder.Services
             .AddSingleton<MaxBotClient>()
-            .AddSingleton<MaxBotHandler>()
-            .AddSingleton<MaxBot>()
             .AddSingleton<TelegramBotClient>()
+            .AddSingleton<MaxBotHandler>()
             .AddSingleton<TelegramBotHandler>()
+            .AddSingleton<MaxBot>()
             .AddSingleton<TelegramBot>();
         builder.Services
             .AddHostedService<MaxBotWorker>()
