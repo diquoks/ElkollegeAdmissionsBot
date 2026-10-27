@@ -19,7 +19,7 @@ public class MaxBotClient(IOptions<MaxBotOptions> options) : IBotClient, IDispos
                 AllowedUpdateTypes = [UpdateType.MessageCreated, UpdateType.MessageCallback]
             }
         },
-        // disable certificates validation
+        // disable certificates validation for now
         new HttpClient(new HttpClientHandler { ServerCertificateCustomValidationCallback = (_, _, _, _) => true }));
 
     public async Task<BotUser> GetMeAsync(CancellationToken cancellationToken = default)
@@ -31,10 +31,7 @@ public class MaxBotClient(IOptions<MaxBotOptions> options) : IBotClient, IDispos
 
     public Task SetMyCommandsAsync(BotCommand[] commands, CancellationToken cancellationToken = default)
     {
-        // TODO: https://github.com/NanoAgents/MaxBotNet/issues/41
-        //  await Implementation.Bot.SetCommandsAsync(commands.Select(command => command.ToMax()), cancellationToken);
-
-        return Task.CompletedTask;
+        return Implementation.Bot.SetCommandsAsync(commands.Select(command => command.ToMax()), cancellationToken);
     }
 
     public void Dispose()

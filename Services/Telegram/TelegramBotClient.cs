@@ -25,9 +25,9 @@ public class TelegramBotClient(IOptions<TelegramBotOptions> options) : IBotClien
         return BotUser.FromTelegram(botUser);
     }
 
-    public async Task SetMyCommandsAsync(BotCommand[] commands, CancellationToken cancellationToken = default)
+    public Task SetMyCommandsAsync(BotCommand[] commands, CancellationToken cancellationToken = default)
     {
-        await Implementation.SetMyCommandsAsync(
+        return Implementation.SetMyCommandsAsync(
             commands.Select(command => command.ToTelegram()),
             new BotCommandScopeAllPrivateChats(),
             cancellationToken: cancellationToken);
