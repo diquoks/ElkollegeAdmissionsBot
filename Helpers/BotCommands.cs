@@ -4,7 +4,7 @@ namespace ElkollegeAdmissionsBot.Helpers;
 
 public static class BotCommands
 {
-    private const string StartCommand = "start";
+    public const string StartCommand = "start";
 
     public static BotCommand[] AllCommands { get; } =
     [

@@ -1,4 +1,5 @@
 using ElkollegeAdmissionsBot.Models.Bot;
+using Max.Bot.Types.Enums;
 
 namespace ElkollegeAdmissionsBot.Services.Max;
 
@@ -12,15 +13,11 @@ public partial class MaxBotClient
             commands: commands.Select(command => command.ToMax()),
             cancellationToken: cancellationToken);
 
-    public Task SendMessageToUserAsync(long userId, BotMenu menu, CancellationToken cancellationToken = default) =>
-        Implementation.Messages.SendMessageToUserAsync(
-            userId: userId,
-            text: menu.Text,
-            cancellationToken: cancellationToken); // TODO: add keyboard support
-
-    public Task SendMessageToChatAsync(long chatId, BotMenu menu, CancellationToken cancellationToken = default) =>
+    public Task SendMessageAsync(long chatId, BotMenu menu, CancellationToken cancellationToken = default) =>
         Implementation.Messages.SendMessageAsync(
             chatId: chatId,
             text: menu.Text,
-            cancellationToken: cancellationToken); // TODO: add keyboard support
+            keyboard: menu.Keyboard.ToMax(),
+            format: TextFormat.Html,
+            cancellationToken: cancellationToken);
 }

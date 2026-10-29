@@ -8,7 +8,11 @@ public partial class TelegramBotClient(IOptions<TelegramBotOptions> options) : I
 {
     public static LongPollingOptions LongPollingOptions { get; } = new()
     {
-        AllowedUpdates = [UpdateTypes.Message, UpdateTypes.CallbackQuery],
+        AllowedUpdates =
+        [
+            UpdateTypes.Message,
+            UpdateTypes.CallbackQuery
+        ],
         Timeout = BotOptions.LongPollingTimeoutSeconds
     };
 

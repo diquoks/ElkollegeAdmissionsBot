@@ -1,11 +1,13 @@
 using ElkollegeAdmissionsBot.Extensions;
+using ElkollegeAdmissionsBot.Helpers;
 using ElkollegeAdmissionsBot.Models.Bot;
 
 namespace ElkollegeAdmissionsBot.Services;
 
 public partial class BotHandler
 {
-    public async Task OnCommandAsync(BotMessage message, CancellationToken cancellationToken = default)
+    public async Task OnCommandAsync(BotMessage message, string commandName,
+        CancellationToken cancellationToken = default)
     {
         if (message.From is null || string.IsNullOrWhiteSpace(message.Text))
             return;
@@ -14,6 +16,16 @@ public partial class BotHandler
             user: message.From,
             interaction: message.Text);
 
-        throw new NotImplementedException();
+        switch (commandName)
+        {
+            case BotCommands.StartCommand:
+            {
+                await client.SendMessageAsync(
+                    chatId: message.ChatId,
+                    menu: BotMenus.Test(_botUser.FullName),
+                    cancellationToken: cancellationToken);
+                break;
+            }
+        }
     }
 }

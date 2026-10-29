@@ -1,4 +1,5 @@
 using ElkollegeAdmissionsBot.Models.Bot;
+using Telegram.BotAPI;
 using Telegram.BotAPI.AvailableMethods;
 using Telegram.BotAPI.AvailableTypes;
 using BotCommand = ElkollegeAdmissionsBot.Models.Bot.BotCommand;
@@ -16,12 +17,11 @@ public partial class TelegramBotClient
             scope: new BotCommandScopeAllPrivateChats(),
             cancellationToken: cancellationToken);
 
-    public Task SendMessageToUserAsync(long userId, BotMenu menu, CancellationToken cancellationToken = default) =>
-        SendMessageToChatAsync(userId, menu, cancellationToken);
-
-    public Task SendMessageToChatAsync(long chatId, BotMenu menu, CancellationToken cancellationToken = default) =>
+    public Task SendMessageAsync(long chatId, BotMenu menu, CancellationToken cancellationToken = default) =>
         Implementation.SendMessageAsync(
             chatId: chatId,
             text: menu.Text,
-            cancellationToken: cancellationToken); // TODO: add keyboard support
+            parseMode: FormatStyles.HTML,
+            replyMarkup: menu.Keyboard.ToTelegram(),
+            cancellationToken: cancellationToken);
 }

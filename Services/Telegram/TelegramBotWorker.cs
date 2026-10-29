@@ -10,9 +10,9 @@ public class TelegramBotWorker(ILogger<TelegramBotWorker> logger, TelegramBot bo
         await base.ExecuteAsync(stoppingToken);
 
         await client.Implementation.StartLongPolling(
-            bot.OnUpdateAsync,
-            bot.OnExceptionAsync,
-            TelegramBotClient.LongPollingOptions,
-            stoppingToken);
+            updateHandler: bot.OnUpdateAsync,
+            errorHandler: bot.OnExceptionAsync,
+            options: TelegramBotClient.LongPollingOptions,
+            cancellationToken: stoppingToken);
     }
 }

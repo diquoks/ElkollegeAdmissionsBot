@@ -41,12 +41,9 @@ public class TelegramBot(ILogger<TelegramBot> logger, TelegramBotClient client) 
         await base.OnMessageAsync(message, cancellationToken);
     }
 
-    protected override Task OnCommandAsync(
-        Message message,
-        string commandName,
-        string args,
+    protected override Task OnCommandAsync(Message message, string commandName, string args,
         CancellationToken cancellationToken = default) =>
-        Handler.OnCommandAsync(BotMessage.FromTelegram(message), cancellationToken);
+        Handler.OnCommandAsync(BotMessage.FromTelegram(message), commandName, cancellationToken);
 
     protected override Task OnExceptionAsync(Exception exp, CancellationToken cancellationToken = default)
     {

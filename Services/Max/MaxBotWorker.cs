@@ -6,7 +6,9 @@ public class MaxBotWorker(ILogger<MaxBotWorker> logger, MaxBot bot, MaxBotClient
     {
         await base.ExecuteAsync(stoppingToken);
 
-        await client.Implementation.StartPollingAsync(bot, cancellationToken: stoppingToken);
+        await client.Implementation.StartPollingAsync(
+            handler: bot,
+            cancellationToken: stoppingToken);
     }
 
     public override async Task StopAsync(CancellationToken cancellationToken)
