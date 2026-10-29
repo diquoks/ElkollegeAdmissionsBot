@@ -3,9 +3,21 @@ using TelegramUser = Telegram.BotAPI.AvailableTypes.User;
 
 namespace ElkollegeAdmissionsBot.Models.Bot;
 
-public record BotUser(string? Username)
+public record BotUser(long Id, string? Username, string FirstName, string? LastName)
 {
-    public static BotUser FromMax(MaxUser user) => new(user.Username);
+    public static BotUser FromMax(MaxUser user) => new(
+        Id: user.Id,
+        Username: user.Username,
+        FirstName: user.FirstName!,
+        LastName: user.LastName);
 
-    public static BotUser FromTelegram(TelegramUser user) => new(user.Username);
+    public static BotUser FromTelegram(TelegramUser user) => new(
+        Id: user.Id,
+        Username: user.Username,
+        FirstName: user.FirstName,
+        LastName: user.LastName);
+
+    private string FullName => !string.IsNullOrWhiteSpace(LastName) ? $"{FirstName} {LastName}" : FirstName;
+
+    public string ReadableInfo => !string.IsNullOrWhiteSpace(Username) ? $"{FullName} | @{Username}" : FullName;
 }

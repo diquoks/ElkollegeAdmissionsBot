@@ -1,11 +1,9 @@
 namespace ElkollegeAdmissionsBot.Services;
 
-public interface IBot<out THandler> where THandler : BotHandler
+public interface IBot
 {
-    public THandler Handler { get; }
+    public BotHandler Handler { get; }
 
-    public Task PrepareAsync(CancellationToken cancellationToken = default)
-    {
-        return Handler.PrepareAsync(cancellationToken);
-    }
+    public Task PrepareAsync(CancellationToken cancellationToken = default) =>
+        Handler.PrepareAsync(cancellationToken);
 }

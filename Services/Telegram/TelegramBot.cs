@@ -1,31 +1,52 @@
+using ElkollegeAdmissionsBot.Models.Bot;
 using Telegram.BotAPI;
+using Telegram.BotAPI.AvailableTypes;
 using Telegram.BotAPI.Extensions;
+using Telegram.BotAPI.Extensions.Commands;
 using Telegram.BotAPI.GettingUpdates;
 
 namespace ElkollegeAdmissionsBot.Services.Telegram;
 
-public class TelegramBot(ILogger<TelegramBot> logger, TelegramBotHandler handler)
-    : SimpleUpdateHandlerBase, IBot<TelegramBotHandler>
+public class TelegramBot(ILogger<TelegramBot> logger, TelegramBotClient client) : SimpleUpdateHandlerBase, IBot
 {
-    public TelegramBotHandler Handler { get; } = handler;
+    public BotHandler Handler { get; } = new(logger, client);
 
     public async Task PrepareAsync(CancellationToken cancellationToken = default)
     {
         var botUser = await Handler.PrepareAsync(cancellationToken);
 
-        if (botUser.Username is not null)
+        if (!string.IsNullOrWhiteSpace(botUser.Username))
             SetBotUserName(botUser.Username);
     }
 
-    public Task OnUpdateAsync(ITelegramBotClient _, Update update, CancellationToken cancellationToken = default)
+    public Task OnUpdateAsync(ITelegramBotClient _, Update update, CancellationToken cancellationToken = default) =>
+        OnUpdateAsync(update, cancellationToken);
+
+    public Task OnExceptionAsync(ITelegramBotClient _, Exception exp, CancellationToken cancellationToken = default) =>
+        OnExceptionAsync(exp, cancellationToken);
+
+    protected override async Task OnMessageAsync(Message message, CancellationToken cancellationToken = default)
     {
-        return OnUpdateAsync(update, cancellationToken);
+        if (message.From?.Id == TelegramConstants.TelegramId)
+            return;
+
+        if (BotCommandParser.TryParse(message, out _))
+        {
+            await base.OnMessageAsync(message, cancellationToken);
+            return;
+        }
+
+        await Handler.OnMessageAsync(BotMessage.FromTelegram(message), cancellationToken);
+
+        await base.OnMessageAsync(message, cancellationToken);
     }
 
-    public Task OnExceptionAsync(ITelegramBotClient _, Exception exp, CancellationToken cancellationToken = default)
-    {
-        return OnExceptionAsync(exp, cancellationToken);
-    }
+    protected override Task OnCommandAsync(
+        Message message,
+        string commandName,
+        string args,
+        CancellationToken cancellationToken = default) =>
+        Handler.OnCommandAsync(BotMessage.FromTelegram(message), cancellationToken);
 
     protected override Task OnExceptionAsync(Exception exp, CancellationToken cancellationToken = default)
     {

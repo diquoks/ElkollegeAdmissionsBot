@@ -8,6 +8,6 @@ public static class BotCommands
 
     public static BotCommand[] AllCommands { get; } =
     [
-        new(StartCommand, "test")
+        new(StartCommand, "Получить ответы на часто задаваемые вопросы")
     ];
 }

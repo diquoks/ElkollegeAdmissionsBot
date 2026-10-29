@@ -1,7 +1,6 @@
 namespace ElkollegeAdmissionsBot.Services.Max;
 
-public class MaxBotWorker(ILogger<MaxBotWorker> logger, MaxBot bot, MaxBotClient client)
-    : BotWorker<MaxBotHandler>(logger, bot)
+public class MaxBotWorker(ILogger<MaxBotWorker> logger, MaxBot bot, MaxBotClient client) : BotWorker(logger, bot)
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {

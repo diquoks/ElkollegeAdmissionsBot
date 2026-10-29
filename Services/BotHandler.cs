@@ -3,7 +3,7 @@ using ElkollegeAdmissionsBot.Models.Bot;
 
 namespace ElkollegeAdmissionsBot.Services;
 
-public abstract class BotHandler(ILogger logger, IBotClient client)
+public partial class BotHandler(ILogger logger, IBotClient client)
 {
     public async Task<BotUser> PrepareAsync(CancellationToken cancellationToken = default)
     {

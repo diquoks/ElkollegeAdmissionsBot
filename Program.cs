@@ -14,8 +14,6 @@ public static class Program
         builder.Services
             .AddSingleton<MaxBotClient>()
             .AddSingleton<TelegramBotClient>()
-            .AddSingleton<MaxBotHandler>()
-            .AddSingleton<TelegramBotHandler>()
             .AddSingleton<MaxBot>()
             .AddSingleton<TelegramBot>();
         builder.Services

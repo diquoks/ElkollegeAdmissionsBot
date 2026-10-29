@@ -3,7 +3,7 @@ using Telegram.BotAPI.Extensions.LongPolling;
 namespace ElkollegeAdmissionsBot.Services.Telegram;
 
 public class TelegramBotWorker(ILogger<TelegramBotWorker> logger, TelegramBot bot, TelegramBotClient client)
-    : BotWorker<TelegramBotHandler>(logger, bot)
+    : BotWorker(logger, bot)
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
