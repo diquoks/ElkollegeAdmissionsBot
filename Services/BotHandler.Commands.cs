@@ -12,9 +12,7 @@ public partial class BotHandler
         if (message.From is null || string.IsNullOrWhiteSpace(message.Text))
             return;
 
-        logger.LogBotInteraction(
-            user: message.From,
-            interaction: message.Text);
+        logger.LogBotMessage(message);
 
         switch (commandName)
         {
