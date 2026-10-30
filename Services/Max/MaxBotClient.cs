@@ -7,10 +7,10 @@ namespace ElkollegeAdmissionsBot.Services.Max;
 
 public partial class MaxBotClient : IBotClient, IDisposable
 {
-    public MaxClient Implementation { get; }
-
     private readonly HttpClient _httpClient;
     private readonly HttpClient _pollingHttpClient;
+
+    public MaxClient Implementation { get; }
 
     public MaxBotClient(IOptions<MaxBotOptions> options)
     {
@@ -42,7 +42,6 @@ public partial class MaxBotClient : IBotClient, IDisposable
     {
         ServerCertificateCustomValidationCallback = (_, _, _, _) => true
     };
-
 
     public void Dispose()
     {

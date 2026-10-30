@@ -8,9 +8,9 @@ namespace ElkollegeAdmissionsBot.Services.Max;
 
 public class MaxBot(ILogger<MaxBot> logger, MaxBotClient client) : UpdateHandlerBase, IBot
 {
-    public BotHandler Handler { get; } = new(logger, client);
-
     private string? _botUsername;
+
+    public BotHandler Handler { get; } = new(logger, client);
 
     public async Task PrepareAsync(CancellationToken cancellationToken = default)
     {
