@@ -1,6 +1,6 @@
 namespace ElkollegeAdmissionsBot.Services.Telegram;
 
-public record TelegramBotOptions : BotOptions
+public record TelegramBotClientOptions : BotClientOptions
 {
     public const string Section = "Telegram";
 }

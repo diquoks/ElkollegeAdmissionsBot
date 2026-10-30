@@ -1,6 +1,6 @@
 namespace ElkollegeAdmissionsBot.Services.Max;
 
-public record MaxBotOptions : BotOptions
+public record MaxBotClientOptions : BotClientOptions
 {
     public const string Section = "Max";
 }

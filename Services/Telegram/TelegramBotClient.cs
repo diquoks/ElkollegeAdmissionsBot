@@ -1,10 +1,11 @@
 using Microsoft.Extensions.Options;
 using Telegram.BotAPI.Extensions.LongPolling;
 using Telegram.BotAPI.GettingUpdates;
+using TelegramClient = Telegram.BotAPI.TelegramBotClient;
 
 namespace ElkollegeAdmissionsBot.Services.Telegram;
 
-public partial class TelegramBotClient(IOptions<TelegramBotOptions> options) : IBotClient
+public partial class TelegramBotClient(IOptions<TelegramBotClientOptions> options) : IBotClient
 {
     public static LongPollingOptions LongPollingOptions { get; } = new()
     {
@@ -13,8 +14,8 @@ public partial class TelegramBotClient(IOptions<TelegramBotOptions> options) : I
             UpdateTypes.Message,
             UpdateTypes.CallbackQuery
         ],
-        Timeout = BotOptions.LongPollingTimeoutSeconds
+        Timeout = BotClientOptions.LongPollingTimeoutSeconds
     };
 
-    public global::Telegram.BotAPI.TelegramBotClient Implementation { get; } = new(options.Value.BotToken);
+    public TelegramClient Implementation { get; } = new(options.Value.BotToken);
 }

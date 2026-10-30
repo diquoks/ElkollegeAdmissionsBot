@@ -12,19 +12,19 @@ public partial class MaxBotClient : IBotClient, IDisposable
 
     public MaxClient Implementation { get; }
 
-    public MaxBotClient(IOptions<MaxBotOptions> options)
+    public MaxBotClient(IOptions<MaxBotClientOptions> options)
     {
         _httpClient = new HttpClient(UnvalidatedHttpClientHandler);
         _pollingHttpClient = new HttpClient(UnvalidatedHttpClientHandler);
 
         Implementation = new MaxClient(
-            options: new global::Max.Bot.Configuration.MaxBotOptions
+            options: new MaxBotOptions
             {
                 Token = options.Value.BotToken,
                 BaseUrl = "https://platform-api2.max.ru",
                 Polling = new MaxPollingOptions
                 {
-                    LongPollingTimeout = TimeSpan.FromSeconds(BotOptions.LongPollingTimeoutSeconds),
+                    LongPollingTimeout = TimeSpan.FromSeconds(BotClientOptions.LongPollingTimeoutSeconds),
                     AllowedUpdateTypes =
                     [
                         UpdateType.MessageCreated,

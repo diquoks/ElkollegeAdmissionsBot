@@ -9,8 +9,8 @@ public static class Program
     {
         var builder = Host.CreateApplicationBuilder(args);
         builder.Services
-            .Configure<MaxBotOptions>(builder.Configuration.GetSection(MaxBotOptions.Section))
-            .Configure<TelegramBotOptions>(builder.Configuration.GetSection(TelegramBotOptions.Section));
+            .Configure<MaxBotClientOptions>(builder.Configuration.GetSection(MaxBotClientOptions.Section))
+            .Configure<TelegramBotClientOptions>(builder.Configuration.GetSection(TelegramBotClientOptions.Section));
         builder.Services
             .AddSingleton<MaxBotClient>()
             .AddSingleton<TelegramBotClient>()
