@@ -1,3 +1,4 @@
+using Telegram.BotAPI.Extensions;
 using MaxInlineKeyboard = Max.Bot.Types.InlineKeyboard;
 using TelegramInlineKeyboard = Telegram.BotAPI.AvailableTypes.InlineKeyboardMarkup;
 
@@ -10,4 +11,9 @@ public record BotKeyboard(IBotButton[][] Rows)
 
     public TelegramInlineKeyboard ToTelegram() =>
         new([.. Rows.Select(row => row.Select(button => button.ToTelegram()).ToArray())]);
+}
+
+public class BotKeyboardBuilder : KeyboardBuilderBase<BotKeyboardBuilder, IBotButton>
+{
+    public BotKeyboard Build() => new([.. this.Select(row => row.ToArray())]);
 }

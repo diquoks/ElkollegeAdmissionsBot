@@ -10,13 +10,9 @@ public static class BotMenus
 
          Здесь ты сможешь найти ответы на часто задаваемые вопросы, а также отправить свой вопрос приёмной комиссии.
          """,
-        new BotKeyboard(
-        [
-            [
-                new BotCallbackButton("test callback", "test")
-            ],
-            [
-                new BotLinkButton("test link", "https://diquoks.github.io")
-            ]
-        ])); // TODO
+        new BotKeyboardBuilder()
+            .Append(BotButtons.TestCallback)
+            .AppendRow()
+            .Append(BotButtons.TestLink)
+            .Build());
 }
