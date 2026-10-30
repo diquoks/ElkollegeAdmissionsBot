@@ -20,7 +20,7 @@ public partial class BotHandler
             {
                 await client.SendMessageAsync(
                     chatId: message.ChatId,
-                    menu: BotMenus.Test(_botUser.FullName),
+                    menu: BotMenus.Test(_botUser?.FullName ?? string.Empty),
                     cancellationToken: cancellationToken);
                 break;
             }

@@ -5,7 +5,7 @@ namespace ElkollegeAdmissionsBot.Services;
 
 public partial class BotHandler(ILogger logger, IBotClient client)
 {
-    private BotUser _botUser = null!;
+    private BotUser? _botUser;
 
     public async Task<BotUser> PrepareAsync(CancellationToken cancellationToken = default)
     {
