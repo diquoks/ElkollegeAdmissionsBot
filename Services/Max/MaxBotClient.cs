@@ -12,7 +12,9 @@ public partial class MaxBotClient : IBotClient, IDisposable
 
     public MaxClient Implementation { get; }
 
-    public MaxBotClient(IOptions<MaxBotClientOptions> options)
+    public long AdminGroupId { get; }
+
+    public MaxBotClient(IOptions<MaxBotClientOptions> options, ILoggerFactory loggerFactory)
     {
         _httpClient = new HttpClient(UnvalidatedHttpClientHandler);
         _pollingHttpClient = new HttpClient(UnvalidatedHttpClientHandler);
@@ -29,12 +31,16 @@ public partial class MaxBotClient : IBotClient, IDisposable
                     [
                         UpdateType.MessageCreated,
                         UpdateType.MessageCallback,
+                        UpdateType.BotStarted,
                         UpdateType.MessageChatCreated
                     ]
                 }
             },
             httpClient: _httpClient,
-            pollingHttpClient: _pollingHttpClient);
+            pollingHttpClient: _pollingHttpClient,
+            loggerFactory: loggerFactory);
+
+        AdminGroupId = options.Value.AdminGroupId;
     }
 
     // disables certificates validation

@@ -9,4 +9,6 @@ public interface IBotClient
     public Task SetMyCommandsAsync(BotCommand[] commands, CancellationToken cancellationToken = default);
 
     public Task SendMessageAsync(long chatId, BotMenu menu, CancellationToken cancellationToken = default);
+
+    public Task AnswerCallbackQueryAsync(string callbackQueryId, CancellationToken cancellationToken = default);
 }

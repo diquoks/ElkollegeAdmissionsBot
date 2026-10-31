@@ -7,9 +7,10 @@ using Telegram.BotAPI.GettingUpdates;
 
 namespace ElkollegeAdmissionsBot.Services.Telegram;
 
-public class TelegramBot(ILogger<TelegramBot> logger, TelegramBotClient client) : SimpleUpdateHandlerBase, IBot
+public class TelegramBot(ILogger<TelegramBot> logger, DatabaseManager databaseManager, TelegramBotClient client)
+    : SimpleUpdateHandlerBase, IBot
 {
-    public BotHandler Handler { get; } = new(logger, client);
+    public BotHandler Handler { get; } = new(logger, databaseManager, client);
 
     public async Task PrepareAsync(CancellationToken cancellationToken = default)
     {
@@ -27,7 +28,7 @@ public class TelegramBot(ILogger<TelegramBot> logger, TelegramBotClient client) 
 
     protected override async Task OnMessageAsync(Message message, CancellationToken cancellationToken = default)
     {
-        if (message.From?.Id is null or TelegramConstants.TelegramId)
+        if (message.From?.Id is null or TelegramConstants.TelegramId || string.IsNullOrWhiteSpace(message.Text))
             return;
 
         if (BotCommandParser.TryParse(message, out _))
@@ -44,6 +45,15 @@ public class TelegramBot(ILogger<TelegramBot> logger, TelegramBotClient client) 
     protected override Task OnCommandAsync(Message message, string commandName, string args,
         CancellationToken cancellationToken = default) =>
         Handler.OnCommandAsync(BotMessage.FromTelegram(message), commandName, cancellationToken);
+
+    protected override Task OnCallbackQueryAsync(CallbackQuery callbackQuery,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(callbackQuery.Data) || callbackQuery.Message is null)
+            return Task.CompletedTask;
+
+        return Handler.OnCallbackQueryAsync(BotCallbackQuery.FromTelegram(callbackQuery), cancellationToken);
+    }
 
     protected override Task OnExceptionAsync(Exception exp, CancellationToken cancellationToken = default)
     {

@@ -9,7 +9,9 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Dapper" Version="2.1.89" />
         <PackageReference Include="MaxMessenger.Bot" Version="0.8.0-alpha" />
+        <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.14" />
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.14" />
         <PackageReference Include="Telegram.BotAPI" Version="10.3.1" />
         <PackageReference Include="Telegram.BotAPI.Extensions" Version="0.8.2" />

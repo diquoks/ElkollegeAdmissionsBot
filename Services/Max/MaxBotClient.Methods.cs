@@ -1,5 +1,6 @@
 using ElkollegeAdmissionsBot.Models.Bot;
 using Max.Bot.Types.Enums;
+using Max.Bot.Types.Requests;
 
 namespace ElkollegeAdmissionsBot.Services.Max;
 
@@ -19,5 +20,11 @@ public partial class MaxBotClient
             text: menu.Text,
             keyboard: menu.Keyboard.ToMax(),
             format: TextFormat.Html,
+            cancellationToken: cancellationToken);
+
+    public Task AnswerCallbackQueryAsync(string callbackQueryId, CancellationToken cancellationToken = default) =>
+        Implementation.Messages.AnswerCallbackQueryAsync(
+            callbackQueryId: callbackQueryId,
+            request: new AnswerCallbackQueryRequest(),
             cancellationToken: cancellationToken);
 }

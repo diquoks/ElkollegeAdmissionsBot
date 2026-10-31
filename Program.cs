@@ -1,3 +1,4 @@
+using ElkollegeAdmissionsBot.Services;
 using ElkollegeAdmissionsBot.Services.Max;
 using ElkollegeAdmissionsBot.Services.Telegram;
 
@@ -12,6 +13,7 @@ public static class Program
             .Configure<MaxBotClientOptions>(builder.Configuration.GetSection(MaxBotClientOptions.Section))
             .Configure<TelegramBotClientOptions>(builder.Configuration.GetSection(TelegramBotClientOptions.Section));
         builder.Services
+            .AddSingleton<DatabaseManager>()
             .AddSingleton<MaxBotClient>()
             .AddSingleton<TelegramBotClient>()
             .AddSingleton<MaxBot>()

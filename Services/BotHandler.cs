@@ -3,7 +3,7 @@ using ElkollegeAdmissionsBot.Models.Bot;
 
 namespace ElkollegeAdmissionsBot.Services;
 
-public partial class BotHandler(ILogger logger, IBotClient client)
+public partial class BotHandler(ILogger logger, DatabaseManager databaseManager, IBotClient client)
 {
     private BotUser? _botUser;
 
@@ -11,7 +11,9 @@ public partial class BotHandler(ILogger logger, IBotClient client)
     {
         _botUser = await client.GetMeAsync(cancellationToken);
 
-        await client.SetMyCommandsAsync(BotCommands.AllCommands, cancellationToken);
+        await client.SetMyCommandsAsync(
+            commands: BotCommands.AllCommands,
+            cancellationToken: cancellationToken);
 
         if (logger.IsEnabled(LogLevel.Information))
             logger.LogInformation("Handler runs on @{BotUsername}.", _botUser.Username);

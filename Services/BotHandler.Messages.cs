@@ -7,11 +7,17 @@ public partial class BotHandler
 {
     public async Task OnMessageAsync(BotMessage message, CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrWhiteSpace(message.Text))
-            return;
-
         logger.LogBotMessage(message);
 
-        throw new NotImplementedException();
+        var state = await databaseManager.GetStateAsync(message.From.Id, cancellationToken);
+
+        // TODO
+        //  switch (state.Type)
+        //  {
+        //      default:
+        //          return;
+        //  }
+
+        await databaseManager.UpsertStateAsync(state, cancellationToken);
     }
 }

@@ -24,4 +24,9 @@ public partial class TelegramBotClient
             parseMode: FormatStyles.HTML,
             replyMarkup: menu.Keyboard.ToTelegram(),
             cancellationToken: cancellationToken);
+
+    public Task AnswerCallbackQueryAsync(string callbackQueryId, CancellationToken cancellationToken = default) =>
+        Implementation.AnswerCallbackQueryAsync(
+            callbackQueryId: callbackQueryId,
+            cancellationToken: cancellationToken);
 }

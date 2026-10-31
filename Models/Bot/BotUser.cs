@@ -18,6 +18,4 @@ public record BotUser(long Id, string? Username, string FirstName, string? LastN
         LastName: user.LastName);
 
     public string FullName => !string.IsNullOrWhiteSpace(LastName) ? $"{FirstName} {LastName}" : FirstName;
-
-    public string ReadableInfo => !string.IsNullOrWhiteSpace(Username) ? $"{FullName} | @{Username}" : FullName;
 }

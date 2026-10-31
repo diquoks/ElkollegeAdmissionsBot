@@ -9,8 +9,14 @@ public static class LoggerExtensions
         public void LogBotMessage(BotMessage message, object? properties = null) =>
             logger.LogBotInteraction(
                 message.From,
-                $"\"{message.Text ?? string.Empty}\"",
+                $"\"{message.Text}\"",
                 new { message.ChatId, Properties = properties });
+
+        public void LogBotCallbackQuery(BotCallbackQuery callbackQuery, object? properties = null) =>
+            logger.LogBotInteraction(
+                callbackQuery.From,
+                callbackQuery.Data,
+                new { callbackQuery.ChatId, Properties = properties });
 
         private void LogBotInteraction(BotUser user, string interaction, object? properties = null)
         {
@@ -19,7 +25,7 @@ public static class LoggerExtensions
 
             logger.LogInformation(
                 "{UserInfo} ({UserId}) — {Interaction} | {@Properties}",
-                user.ReadableInfo,
+                !string.IsNullOrWhiteSpace(user.Username) ? $"{user.FullName} | @{user.Username}" : user.FullName,
                 user.Id,
                 interaction,
                 properties);
