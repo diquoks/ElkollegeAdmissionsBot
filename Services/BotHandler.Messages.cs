@@ -7,7 +7,7 @@ public partial class BotHandler
 {
     public async Task OnMessageAsync(BotMessage message, CancellationToken cancellationToken = default)
     {
-        if (message.From is null || string.IsNullOrWhiteSpace(message.Text))
+        if (string.IsNullOrWhiteSpace(message.Text))
             return;
 
         logger.LogBotMessage(message);

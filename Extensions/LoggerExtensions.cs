@@ -8,8 +8,8 @@ public static class LoggerExtensions
     {
         public void LogBotMessage(BotMessage message, object? properties = null) =>
             logger.LogBotInteraction(
-                message.From!,
-                $"\"{message.Text!}\"",
+                message.From,
+                $"\"{message.Text ?? string.Empty}\"",
                 new { message.ChatId, Properties = properties });
 
         private void LogBotInteraction(BotUser user, string interaction, object? properties = null)

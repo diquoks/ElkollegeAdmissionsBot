@@ -27,7 +27,7 @@ public class TelegramBot(ILogger<TelegramBot> logger, TelegramBotClient client) 
 
     protected override async Task OnMessageAsync(Message message, CancellationToken cancellationToken = default)
     {
-        if (message.From?.Id == TelegramConstants.TelegramId)
+        if (message.From?.Id is null or TelegramConstants.TelegramId)
             return;
 
         if (BotCommandParser.TryParse(message, out _))

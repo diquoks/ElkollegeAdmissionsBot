@@ -9,9 +9,6 @@ public partial class BotHandler
     public async Task OnCommandAsync(BotMessage message, string commandName,
         CancellationToken cancellationToken = default)
     {
-        if (message.From is null || string.IsNullOrWhiteSpace(message.Text))
-            return;
-
         logger.LogBotMessage(message);
 
         switch (commandName)

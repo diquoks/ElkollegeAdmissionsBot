@@ -1,5 +1,3 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using ElkollegeAdmissionsBot.Models.Bot;
 using Max.Bot.Polling;
 using Max.Bot.Types.Enums;
@@ -9,11 +7,6 @@ namespace ElkollegeAdmissionsBot.Services.Max;
 
 public class MaxBot(ILogger<MaxBot> logger, MaxBotClient client) : UpdateHandlerBase, IBot
 {
-    private static readonly JsonSerializerOptions JsonEnumOptions = new()
-    {
-        Converters = { new JsonStringEnumConverter() }
-    };
-
     private BotUser? _botUser;
 
     public BotHandler Handler { get; } = new(logger, client);
@@ -23,18 +16,14 @@ public class MaxBot(ILogger<MaxBot> logger, MaxBotClient client) : UpdateHandler
 
     public override Task HandleMessageAsync(UpdateContext context, CancellationToken cancellationToken)
     {
-        var message = context.Update.Message;
-
-        if (message?.Text is null)
+        if (context.Update.Message is not { } message ||
+            message.Recipient.ChatId is null ||
+            message.Sender is null)
             return Task.CompletedTask;
 
-        var chatType = JsonSerializer
-            .SerializeToElement(message.Recipient!.ChatType!)
-            .Deserialize<ChatType>(JsonEnumOptions);
-
-        if (BotCommandParser.TryParse(message.Text, out var result))
+        if (BotCommandParser.TryParse(message.Text ?? string.Empty, out var result))
         {
-            if (chatType is ChatType.Dialog)
+            if (message.Recipient.ChatType is ChatType.Dialog)
                 return Handler.OnCommandAsync(BotMessage.FromMax(message), result.commandName, cancellationToken);
 
             if (string.IsNullOrWhiteSpace(result.username) || result.username != _botUser?.Username)
@@ -43,15 +32,11 @@ public class MaxBot(ILogger<MaxBot> logger, MaxBotClient client) : UpdateHandler
             return Handler.OnCommandAsync(BotMessage.FromMax(message), result.commandName, cancellationToken);
         }
 
-        var messageLinkType = JsonSerializer
-            .SerializeToElement(message.Link?.Type)
-            .Deserialize<MessageLinkType?>(JsonEnumOptions);
-
-        if (chatType is ChatType.Dialog)
+        if (message.Recipient.ChatType is ChatType.Dialog)
             return Handler.OnMessageAsync(BotMessage.FromMax(message), cancellationToken);
 
-        if (messageLinkType is not MessageLinkType.Reply ||
-            message.Link!.Sender?.Id is not { } senderId ||
+        if (message.Link?.Type is not MessageLinkType.Reply ||
+            message.Link.Sender?.Id is not { } senderId ||
             senderId != _botUser?.Id)
             return Task.CompletedTask;
 

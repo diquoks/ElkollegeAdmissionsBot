@@ -8,7 +8,7 @@ public record BotUser(long Id, string? Username, string FirstName, string? LastN
     public static BotUser FromMax(MaxUser user) => new(
         Id: user.Id,
         Username: user.Username,
-        FirstName: user.FirstName!,
+        FirstName: user.FirstName,
         LastName: user.LastName);
 
     public static BotUser FromTelegram(TelegramUser user) => new(
