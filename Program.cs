@@ -16,6 +16,9 @@ public static class Program
             .AddSingleton<DatabaseManager>()
             .AddSingleton<MaxBotClient>()
             .AddSingleton<TelegramBotClient>()
+            .AddSingleton<InterconnectionService>()
+            .AddSingleton<MaxBotHandler>()
+            .AddSingleton<TelegramBotHandler>()
             .AddSingleton<MaxBot>()
             .AddSingleton<TelegramBot>();
         builder.Services

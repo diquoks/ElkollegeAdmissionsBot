@@ -17,13 +17,31 @@ public partial class TelegramBotClient
             scope: new BotCommandScopeAllPrivateChats(),
             cancellationToken: cancellationToken);
 
-    public Task SendMessageAsync(long chatId, BotMenu menu, CancellationToken cancellationToken = default) =>
-        Implementation.SendMessageAsync(
+    public Task<BotMessage> SendMessageAsync(long chatId, BotMenu menu,
+        CancellationToken cancellationToken = default) =>
+        InternalSendMessageAsync(
             chatId: chatId,
-            text: menu.Text,
-            parseMode: FormatStyles.HTML,
-            replyMarkup: menu.Keyboard.ToTelegram(),
+            menu: menu,
             cancellationToken: cancellationToken);
+
+    public Task SendReplyAsync(string messageId, long chatId, BotMenu menu,
+        CancellationToken cancellationToken = default) =>
+        InternalSendMessageAsync(
+            chatId: chatId,
+            menu: menu,
+            messageId: int.TryParse(messageId, out var result) ? result : null,
+            cancellationToken: cancellationToken);
+
+    private async Task<BotMessage> InternalSendMessageAsync(long chatId, BotMenu menu, int? messageId = null,
+        CancellationToken cancellationToken = default) =>
+        BotMessage.FromTelegram(
+            await Implementation.SendMessageAsync(
+                chatId: chatId,
+                text: menu.Text,
+                parseMode: FormatStyles.HTML,
+                replyParameters: messageId is not null ? new ReplyParameters { MessageId = messageId } : null,
+                replyMarkup: menu.Keyboard?.ToTelegram(),
+                cancellationToken: cancellationToken));
 
     public Task AnswerCallbackQueryAsync(string callbackQueryId, CancellationToken cancellationToken = default) =>
         Implementation.AnswerCallbackQueryAsync(

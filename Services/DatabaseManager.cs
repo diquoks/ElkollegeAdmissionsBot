@@ -30,10 +30,10 @@ public class DatabaseManager
 
             CREATE TABLE IF NOT EXISTS messages (
                 Id             TEXT    NOT NULL PRIMARY KEY,
-                Type           INTEGER NOT NULL,
+                MessengerType  INTEGER NOT NULL,
                 OriginalId     TEXT    NOT NULL,
                 OriginalChatId INTEGER NOT NULL,
-                UNIQUE (Type, OriginalId, OriginalChatId) ON CONFLICT REPLACE
+                UNIQUE (MessengerType, OriginalId, OriginalChatId) ON CONFLICT REPLACE
             );
             """);
     }
@@ -74,8 +74,8 @@ public class DatabaseManager
         await connection.QueryAsync(
             new CommandDefinition(
                 """
-                INSERT INTO messages (Id, Type, OriginalId, OriginalChatId)
-                VALUES (@Id, @Type, @OriginalId, @OriginalChatId);
+                INSERT INTO messages (Id, MessengerType, OriginalId, OriginalChatId)
+                VALUES (@Id, @MessengerType, @OriginalId, @OriginalChatId);
                 """,
                 message,
                 cancellationToken: cancellationToken));

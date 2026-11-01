@@ -7,14 +7,11 @@ using Telegram.BotAPI.GettingUpdates;
 
 namespace ElkollegeAdmissionsBot.Services.Telegram;
 
-public class TelegramBot(ILogger<TelegramBot> logger, DatabaseManager databaseManager, TelegramBotClient client)
-    : SimpleUpdateHandlerBase, IBot
+public class TelegramBot(ILogger<TelegramBot> logger, TelegramBotHandler handler) : SimpleUpdateHandlerBase, IBot
 {
-    public BotHandler Handler { get; } = new(logger, databaseManager, client);
-
     public async Task PrepareAsync(CancellationToken cancellationToken = default)
     {
-        var botUser = await Handler.PrepareAsync(cancellationToken);
+        var botUser = await handler.PrepareAsync(cancellationToken);
 
         if (!string.IsNullOrWhiteSpace(botUser.Username))
             SetBotUserName(botUser.Username);
@@ -37,14 +34,14 @@ public class TelegramBot(ILogger<TelegramBot> logger, DatabaseManager databaseMa
             return;
         }
 
-        await Handler.OnMessageAsync(BotMessage.FromTelegram(message), cancellationToken);
+        await handler.OnMessageAsync(BotMessage.FromTelegram(message), cancellationToken);
 
         await base.OnMessageAsync(message, cancellationToken);
     }
 
     protected override Task OnCommandAsync(Message message, string commandName, string args,
         CancellationToken cancellationToken = default) =>
-        Handler.OnCommandAsync(BotMessage.FromTelegram(message), commandName, cancellationToken);
+        handler.OnCommandAsync(BotMessage.FromTelegram(message), commandName, cancellationToken);
 
     protected override Task OnCallbackQueryAsync(CallbackQuery callbackQuery,
         CancellationToken cancellationToken = default)
@@ -52,7 +49,7 @@ public class TelegramBot(ILogger<TelegramBot> logger, DatabaseManager databaseMa
         if (string.IsNullOrWhiteSpace(callbackQuery.Data) || callbackQuery.Message is null)
             return Task.CompletedTask;
 
-        return Handler.OnCallbackQueryAsync(BotCallbackQuery.FromTelegram(callbackQuery), cancellationToken);
+        return handler.OnCallbackQueryAsync(BotCallbackQuery.FromTelegram(callbackQuery), cancellationToken);
     }
 
     protected override Task OnExceptionAsync(Exception exp, CancellationToken cancellationToken = default)
@@ -65,15 +62,15 @@ public class TelegramBot(ILogger<TelegramBot> logger, DatabaseManager databaseMa
                     return Task.FromCanceled(cancellationToken);
 
                 logger.LogWarning(exp, "Request timed out.");
-                break;
+
+                return Task.CompletedTask;
             }
             default:
             {
                 logger.LogError(exp, "An exception occurred.");
-                break;
+
+                return Task.CompletedTask;
             }
         }
-
-        return Task.CompletedTask;
     }
 }

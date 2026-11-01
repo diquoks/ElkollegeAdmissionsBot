@@ -15,5 +15,6 @@ public record BotKeyboard(IBotButton[][] Rows)
 
 public class BotKeyboardBuilder : KeyboardBuilderBase<BotKeyboardBuilder, IBotButton>
 {
-    public BotKeyboard Build() => new([.. this.Select(row => row.ToArray())]);
+    public BotKeyboard Build() =>
+        new([.. this.Select(row => row.ToArray())]);
 }

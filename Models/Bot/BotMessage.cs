@@ -3,19 +3,27 @@ using TelegramMessage = Telegram.BotAPI.AvailableTypes.Message;
 
 namespace ElkollegeAdmissionsBot.Models.Bot;
 
-public record BotMessage(string Id, long ChatId, BotUser From, string Text)
+public record BotMessage(
+    string Id,
+    long ChatId,
+    MessengerType MessengerType,
+    BotUser From,
+    string Text,
+    string? LinkedMessageId = null)
 {
     public static BotMessage FromMax(MaxMessage message) => new(
         Id: message.Mid!,
         ChatId: message.Recipient.ChatId!.Value,
+        MessengerType: MessengerType.Max,
         From: BotUser.FromMax(message.Sender!),
-        Text: message.Text!);
+        Text: message.Text!,
+        LinkedMessageId: message.Link?.Mid);
 
     public static BotMessage FromTelegram(TelegramMessage message) => new(
         Id: message.MessageId.ToString(),
         ChatId: message.Chat.Id,
+        MessengerType: MessengerType.Telegram,
         From: BotUser.FromTelegram(message.From!),
-        Text: message.Text!);
-
-    public int? IntId => int.TryParse(Id, out var result) ? result : null;
+        Text: message.Text!,
+        LinkedMessageId: message.ReplyToMessage?.MessageId.ToString());
 }

@@ -18,7 +18,7 @@ public static class LoggerExtensions
                 callbackQuery.Data,
                 new { callbackQuery.ChatId, Properties = properties });
 
-        private void LogBotInteraction(BotUser user, string interaction, object? properties = null)
+        public void LogBotInteraction(BotUser user, string interaction, object? properties = null)
         {
             if (!logger.IsEnabled(LogLevel.Information))
                 return;

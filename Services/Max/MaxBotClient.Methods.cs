@@ -14,13 +14,36 @@ public partial class MaxBotClient
             commands: commands.Select(command => command.ToMax()),
             cancellationToken: cancellationToken);
 
-    public Task SendMessageAsync(long chatId, BotMenu menu, CancellationToken cancellationToken = default) =>
-        Implementation.Messages.SendMessageAsync(
+    public Task<BotMessage> SendMessageAsync(long chatId, BotMenu menu,
+        CancellationToken cancellationToken = default) =>
+        InternalSendMessageAsync(
             chatId: chatId,
-            text: menu.Text,
-            keyboard: menu.Keyboard.ToMax(),
-            format: TextFormat.Html,
+            menu: menu,
             cancellationToken: cancellationToken);
+
+    public Task SendReplyAsync(string messageId, long chatId, BotMenu menu,
+        CancellationToken cancellationToken = default) =>
+        InternalSendMessageAsync(
+            chatId: chatId,
+            menu: menu,
+            messageId: messageId,
+            cancellationToken: cancellationToken);
+
+    private async Task<BotMessage> InternalSendMessageAsync(long chatId, BotMenu menu, string? messageId = null,
+        CancellationToken cancellationToken = default) =>
+        BotMessage.FromMax(
+            await Implementation.Messages.SendMessageAsync(
+                request: new SendMessageRequest
+                {
+                    Text = menu.Text,
+                    Attachments = menu.Keyboard is not null ? [AttachmentRequest.Keyboard(menu.Keyboard.ToMax())] : [],
+                    Link = messageId is not null
+                        ? new NewMessageLink { Type = MessageLinkType.Reply, Id = messageId }
+                        : null,
+                    Format = TextFormat.Html
+                },
+                chatId: chatId,
+                cancellationToken: cancellationToken));
 
     public Task AnswerCallbackQueryAsync(string callbackQueryId, CancellationToken cancellationToken = default) =>
         Implementation.Messages.AnswerCallbackQueryAsync(

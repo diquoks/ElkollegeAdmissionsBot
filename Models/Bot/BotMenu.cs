@@ -1,3 +1,3 @@
 namespace ElkollegeAdmissionsBot.Models.Bot;
 
-public record BotMenu(string Text, BotKeyboard Keyboard);
+public record BotMenu(string Text, BotKeyboard? Keyboard = null);

@@ -3,7 +3,11 @@ using ElkollegeAdmissionsBot.Models.Bot;
 
 namespace ElkollegeAdmissionsBot.Services;
 
-public partial class BotHandler(ILogger logger, DatabaseManager databaseManager, IBotClient client)
+public abstract partial class BotHandler(
+    ILogger logger,
+    DatabaseManager databaseManager,
+    IBotClient client,
+    InterconnectionService interconnectionService)
 {
     private BotUser? _botUser;
 

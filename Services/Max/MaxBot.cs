@@ -1,3 +1,4 @@
+using ElkollegeAdmissionsBot.Extensions;
 using ElkollegeAdmissionsBot.Helpers;
 using ElkollegeAdmissionsBot.Models.Bot;
 using Max.Bot.Polling;
@@ -6,15 +7,12 @@ using Telegram.BotAPI.Extensions.Commands;
 
 namespace ElkollegeAdmissionsBot.Services.Max;
 
-public class MaxBot(ILogger<MaxBot> logger, DatabaseManager databaseManager, MaxBotClient client)
-    : UpdateHandlerBase, IBot
+public class MaxBot(ILogger<MaxBot> logger, MaxBotHandler handler, MaxBotClient client) : UpdateHandlerBase, IBot
 {
     private BotUser? _botUser;
 
-    public BotHandler Handler { get; } = new(logger, databaseManager, client);
-
     public async Task PrepareAsync(CancellationToken cancellationToken = default) =>
-        _botUser = await Handler.PrepareAsync(cancellationToken);
+        _botUser = await handler.PrepareAsync(cancellationToken);
 
     public override Task HandleMessageAsync(UpdateContext context, CancellationToken cancellationToken)
     {
@@ -28,23 +26,23 @@ public class MaxBot(ILogger<MaxBot> logger, DatabaseManager databaseManager, Max
         if (BotCommandParser.TryParse(message.Text, out var result))
         {
             if (message.Recipient.ChatType is ChatType.Dialog)
-                return Handler.OnCommandAsync(BotMessage.FromMax(message), result.commandName, cancellationToken);
+                return handler.OnCommandAsync(BotMessage.FromMax(message), result.commandName, cancellationToken);
 
             if (string.IsNullOrWhiteSpace(result.username) || result.username != _botUser?.Username)
                 return Task.CompletedTask;
 
-            return Handler.OnCommandAsync(BotMessage.FromMax(message), result.commandName, cancellationToken);
+            return handler.OnCommandAsync(BotMessage.FromMax(message), result.commandName, cancellationToken);
         }
 
         if (message.Recipient.ChatType is ChatType.Dialog)
-            return Handler.OnMessageAsync(BotMessage.FromMax(message), cancellationToken);
+            return handler.OnMessageAsync(BotMessage.FromMax(message), cancellationToken);
 
         if (message.Link?.Type is not MessageLinkType.Reply ||
             message.Link.Sender?.Id is not { } senderId ||
             senderId != _botUser?.Id)
             return Task.CompletedTask;
 
-        return Handler.OnMessageAsync(BotMessage.FromMax(message), cancellationToken);
+        return handler.OnMessageAsync(BotMessage.FromMax(message), cancellationToken);
     }
 
     public override Task HandleCallbackQueryAsync(UpdateContext context, CancellationToken cancellationToken)
@@ -56,7 +54,7 @@ public class MaxBot(ILogger<MaxBot> logger, DatabaseManager databaseManager, Max
             message.Recipient.ChatId is null)
             return Task.CompletedTask;
 
-        return Handler.OnCallbackQueryAsync(BotCallbackQuery.FromMax(callbackQuery, message), cancellationToken);
+        return handler.OnCallbackQueryAsync(BotCallbackQuery.FromMax(callbackQuery, message), cancellationToken);
     }
 
     public override Task HandleUpdateAsync(UpdateContext context, CancellationToken cancellationToken)
@@ -64,10 +62,16 @@ public class MaxBot(ILogger<MaxBot> logger, DatabaseManager databaseManager, Max
         switch (context.Update.Type)
         {
             case UpdateType.BotStarted:
+            {
+                logger.LogBotInteraction(
+                    user: BotUser.FromMax(context.Update.User!),
+                    interaction: nameof(UpdateType.BotStarted));
+
                 return client.SendMessageAsync(
                     chatId: context.Update.ChatId!.Value,
-                    menu: BotMenus.Test(_botUser?.FullName ?? string.Empty),
+                    menu: BotMenus.Start(_botUser!.FullName),
                     cancellationToken: cancellationToken);
+            }
             default:
                 return Task.CompletedTask;
         }
