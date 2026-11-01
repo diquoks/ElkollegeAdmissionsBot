@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using ElkollegeAdmissionsBot.Helpers;
 using ElkollegeAdmissionsBot.Models;
 using ElkollegeAdmissionsBot.Models.Bot;
@@ -32,7 +33,7 @@ public class InterconnectionService(
         {
             MessengerType.Max => maxClient,
             MessengerType.Telegram => telegramClient,
-            _ => throw new ArgumentOutOfRangeException(nameof(databaseMessage.MessengerType))
+            _ => throw new UnreachableException()
         };
 
         return client.SendReplyAsync(

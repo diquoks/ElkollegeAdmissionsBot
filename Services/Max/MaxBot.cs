@@ -59,19 +59,20 @@ public class MaxBot(ILogger<MaxBot> logger, MaxBotHandler handler, MaxBotClient 
 
     public override Task HandleUpdateAsync(UpdateContext context, CancellationToken cancellationToken)
     {
+        if (string.IsNullOrWhiteSpace(context.Update.UpdateTypeRaw))
+            return Task.CompletedTask;
+
+        logger.LogBotInteraction(
+            user: BotUser.FromMax(context.Update.User!),
+            interaction: context.Update.UpdateTypeRaw);
+
         switch (context.Update.Type)
         {
             case UpdateType.BotStarted:
-            {
-                logger.LogBotInteraction(
-                    user: BotUser.FromMax(context.Update.User!),
-                    interaction: nameof(UpdateType.BotStarted));
-
                 return client.SendMessageAsync(
                     chatId: context.Update.ChatId!.Value,
                     menu: BotMenus.Start(_botUser!.FullName),
                     cancellationToken: cancellationToken);
-            }
             default:
                 return Task.CompletedTask;
         }
