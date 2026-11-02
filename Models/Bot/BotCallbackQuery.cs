@@ -19,6 +19,4 @@ public record BotCallbackQuery(string Id, string Data, BotUser From, string Mess
         From: BotUser.FromTelegram(callbackQuery.From),
         MessageId: callbackQuery.Message!.MessageId.ToString(),
         ChatId: callbackQuery.Message.Chat.Id);
-
-    public int? IntMessageId => int.TryParse(MessageId, out var result) ? result : null;
 }

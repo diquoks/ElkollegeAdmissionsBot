@@ -37,9 +37,12 @@ public class InterconnectionService(
         };
 
         return client.SendReplyAsync(
-            messageId: databaseMessage.OriginalId,
             chatId: databaseMessage.OriginalChatId,
+            messageId: databaseMessage.OriginalId,
             menu: menu,
             cancellationToken: cancellationToken);
     }
+
+    public bool IsInAdminGroup(BotMessage message) =>
+        message.MessengerType is MessengerType.Max && message.ChatId == maxClient.AdminGroupId;
 }

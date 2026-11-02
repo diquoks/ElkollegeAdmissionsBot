@@ -2,6 +2,7 @@ using ElkollegeAdmissionsBot.Models.Bot;
 using Telegram.BotAPI;
 using Telegram.BotAPI.AvailableMethods;
 using Telegram.BotAPI.AvailableTypes;
+using Telegram.BotAPI.UpdatingMessages;
 using BotCommand = ElkollegeAdmissionsBot.Models.Bot.BotCommand;
 
 namespace ElkollegeAdmissionsBot.Services.Telegram;
@@ -24,12 +25,12 @@ public partial class TelegramBotClient
             menu: menu,
             cancellationToken: cancellationToken);
 
-    public Task SendReplyAsync(string messageId, long chatId, BotMenu menu,
+    public Task SendReplyAsync(long chatId, string messageId, BotMenu menu,
         CancellationToken cancellationToken = default) =>
         InternalSendMessageAsync(
             chatId: chatId,
             menu: menu,
-            messageId: int.TryParse(messageId, out var result) ? result : null,
+            messageId: int.Parse(messageId),
             cancellationToken: cancellationToken);
 
     private async Task<BotMessage> InternalSendMessageAsync(long chatId, BotMenu menu, int? messageId = null,
@@ -42,6 +43,28 @@ public partial class TelegramBotClient
                 replyParameters: messageId is not null ? new ReplyParameters { MessageId = messageId } : null,
                 replyMarkup: menu.Keyboard?.ToTelegram(),
                 cancellationToken: cancellationToken));
+
+    public Task EditMessageTextAsync(long chatId, string messageId, BotMenu menu,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            return Implementation.EditMessageTextAsync(
+                chatId: chatId,
+                messageId: int.Parse(messageId),
+                text: menu.Text,
+                parseMode: FormatStyles.HTML,
+                replyMarkup: menu.Keyboard?.ToTelegram(),
+                cancellationToken: cancellationToken);
+        }
+        catch
+        {
+            return SendMessageAsync(
+                chatId: chatId,
+                menu: menu,
+                cancellationToken: cancellationToken);
+        }
+    }
 
     public Task AnswerCallbackQueryAsync(string callbackQueryId, CancellationToken cancellationToken = default) =>
         Implementation.AnswerCallbackQueryAsync(
