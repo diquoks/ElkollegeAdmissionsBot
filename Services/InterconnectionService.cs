@@ -22,8 +22,8 @@ public class InterconnectionService(
             cancellationToken: cancellationToken);
 
         await databaseManager.InsertMessageAsync(
-            DatabaseMessage.FromForwardedMessage(originalMessage, forwardedMessage),
-            cancellationToken);
+            message: DatabaseMessage.FromForwardedMessage(originalMessage, forwardedMessage),
+            cancellationToken: cancellationToken);
     }
 
     public Task SendAnswerFromAdminGroupAsync(DatabaseMessage databaseMessage, BotMenu menu,

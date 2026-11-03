@@ -11,7 +11,10 @@ public partial class BotHandler
     {
         logger.LogBotMessage(message);
 
-        var state = await databaseManager.GetStateAsync(message.From.Id, cancellationToken);
+        var state = await databaseManager.GetStateAsync(
+            userId: message.From.Id,
+            messengerType: message.MessengerType,
+            cancellationToken: cancellationToken);
 
         switch (state.Type)
         {
@@ -35,7 +38,9 @@ public partial class BotHandler
                 if (!interconnectionService.IsInAdminGroup(message) || message.LinkedMessageId is null)
                     return;
 
-                var databaseMessage = await databaseManager.GetMessageAsync(message.LinkedMessageId, cancellationToken);
+                var databaseMessage = await databaseManager.GetMessageAsync(
+                    id: message.LinkedMessageId,
+                    cancellationToken: cancellationToken);
 
                 if (databaseMessage is null)
                     return;
@@ -48,6 +53,8 @@ public partial class BotHandler
             }
         }
 
-        await databaseManager.UpsertStateAsync(state, cancellationToken);
+        await databaseManager.UpsertStateAsync(
+            state: state,
+            cancellationToken: cancellationToken);
     }
 }

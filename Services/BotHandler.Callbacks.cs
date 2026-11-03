@@ -12,7 +12,10 @@ public partial class BotHandler
     {
         logger.LogBotCallbackQuery(callbackQuery);
 
-        var state = await databaseManager.GetStateAsync(callbackQuery.From.Id, cancellationToken);
+        var state = await databaseManager.GetStateAsync(
+            userId: callbackQuery.From.Id,
+            messengerType: callbackQuery.MessengerType,
+            cancellationToken: cancellationToken);
 
         switch (callbackQuery.Data)
         {
@@ -46,6 +49,8 @@ public partial class BotHandler
             callbackQueryId: callbackQuery.Id,
             cancellationToken: cancellationToken);
 
-        await databaseManager.UpsertStateAsync(state, cancellationToken);
+        await databaseManager.UpsertStateAsync(
+            state: state,
+            cancellationToken: cancellationToken);
     }
 }
