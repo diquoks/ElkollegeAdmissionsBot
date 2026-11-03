@@ -16,7 +16,9 @@ public partial class BotHandler
             case BotCommands.StartCommand:
                 return client.SendMessageAsync(
                     chatId: message.ChatId,
-                    menu: BotMenus.Start(_botUser!.FullName),
+                    menu: BotMenus.Start(
+                        botName: _botUser.FullName,
+                        addCustomQuestionButton: !interconnectionService.IsInAdminGroup(message)),
                     cancellationToken: cancellationToken);
             default:
                 return Task.CompletedTask;

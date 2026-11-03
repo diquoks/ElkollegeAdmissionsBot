@@ -70,8 +70,5 @@ public partial class MaxBotClient
     }
 
     public Task AnswerCallbackQueryAsync(string callbackQueryId, CancellationToken cancellationToken = default) =>
-        Implementation.Messages.AnswerCallbackQueryAsync(
-            callbackQueryId: callbackQueryId,
-            request: new AnswerCallbackQueryRequest(),
-            cancellationToken: cancellationToken);
+        Task.CompletedTask;
 }

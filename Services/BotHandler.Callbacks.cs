@@ -23,7 +23,9 @@ public partial class BotHandler
                 await client.EditMessageTextAsync(
                     chatId: callbackQuery.ChatId,
                     messageId: callbackQuery.MessageId,
-                    menu: BotMenus.Start(_botUser!.FullName),
+                    menu: BotMenus.Start(
+                        botName: _botUser.FullName,
+                        addCustomQuestionButton: !interconnectionService.IsInAdminGroup(callbackQuery)),
                     cancellationToken: cancellationToken);
                 break;
             }
@@ -38,14 +40,11 @@ public partial class BotHandler
                     cancellationToken: cancellationToken);
                 break;
             }
-            default:
-            {
-                await client.AnswerCallbackQueryAsync(
-                    callbackQueryId: callbackQuery.Id,
-                    cancellationToken: cancellationToken);
-                return;
-            }
         }
+
+        await client.AnswerCallbackQueryAsync(
+            callbackQueryId: callbackQuery.Id,
+            cancellationToken: cancellationToken);
 
         await databaseManager.UpsertStateAsync(state, cancellationToken);
     }

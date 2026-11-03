@@ -44,5 +44,11 @@ public class InterconnectionService(
     }
 
     public bool IsInAdminGroup(BotMessage message) =>
-        message.MessengerType is MessengerType.Max && message.ChatId == maxClient.AdminGroupId;
+        IsInAdminGroup(message.MessengerType, message.ChatId);
+
+    public bool IsInAdminGroup(BotCallbackQuery callbackQuery) =>
+        IsInAdminGroup(callbackQuery.MessengerType, callbackQuery.ChatId);
+
+    public bool IsInAdminGroup(MessengerType messengerType, long chatId) =>
+        messengerType is MessengerType.Max && chatId == maxClient.AdminGroupId;
 }

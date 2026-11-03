@@ -17,6 +17,6 @@ public record DatabaseMessage
         Id = forwardedMessage.Id,
         MessengerType = originalMessage.MessengerType,
         OriginalId = originalMessage.Id,
-        OriginalChatId = originalMessage.ChatId,
+        OriginalChatId = originalMessage.ChatId
     };
 }
