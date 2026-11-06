@@ -39,14 +39,15 @@ public static class BotMenus
     public static BotMenu ForwardToAdminGroup(BotMessage message) => new(
         $"""
          <b>Новое сообщение из {message.MessengerType}:</b>
-         "{message.Text}"
 
+         "{message.Text}"
          Отправитель: {message.From.FullName} (<pre>{message.From.Id}</pre>)
          """);
 
     public static BotMenu AnswerFromAdminGroup(string text) => new(
         $"""
          <b>Ответ от приёмной комиссии:</b>
+
          "{text}"
          """,
         new BotKeyboardBuilder()
