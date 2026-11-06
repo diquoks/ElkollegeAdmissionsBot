@@ -6,7 +6,7 @@ public record DatabaseMessage
 {
     public required string Id { get; init; }
 
-    public required MessengerType MessengerType { get; init; }
+    public required BotMessengerType MessengerType { get; init; }
 
     public required string OriginalId { get; init; }
 

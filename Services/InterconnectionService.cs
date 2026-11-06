@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using ElkollegeAdmissionsBot.Helpers;
-using ElkollegeAdmissionsBot.Models;
 using ElkollegeAdmissionsBot.Models.Bot;
 using ElkollegeAdmissionsBot.Models.Database;
 using ElkollegeAdmissionsBot.Services.Max;
@@ -31,8 +30,8 @@ public class InterconnectionService(
     {
         IBotClient client = databaseMessage.MessengerType switch
         {
-            MessengerType.Max => maxClient,
-            MessengerType.Telegram => telegramClient,
+            BotMessengerType.Max => maxClient,
+            BotMessengerType.Telegram => telegramClient,
             _ => throw new UnreachableException()
         };
 
@@ -49,6 +48,6 @@ public class InterconnectionService(
     public bool IsInAdminGroup(BotCallbackQuery callbackQuery) =>
         IsInAdminGroup(callbackQuery.MessengerType, callbackQuery.ChatId);
 
-    public bool IsInAdminGroup(MessengerType messengerType, long chatId) =>
-        messengerType is MessengerType.Max && chatId == maxClient.AdminGroupId;
+    public bool IsInAdminGroup(BotMessengerType messengerType, long chatId) =>
+        messengerType is BotMessengerType.Max && chatId == maxClient.AdminGroupId;
 }

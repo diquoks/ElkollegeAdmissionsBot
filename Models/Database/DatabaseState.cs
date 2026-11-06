@@ -1,10 +1,12 @@
+using ElkollegeAdmissionsBot.Models.Bot;
+
 namespace ElkollegeAdmissionsBot.Models.Database;
 
 public record DatabaseState
 {
     public required long UserId { get; init; }
 
-    public required MessengerType MessengerType { get; init; }
+    public required BotMessengerType MessengerType { get; init; }
 
     public StateType Type { get; set; } = StateType.Empty;
 

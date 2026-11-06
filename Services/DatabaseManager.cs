@@ -1,5 +1,5 @@
 using Dapper;
-using ElkollegeAdmissionsBot.Models;
+using ElkollegeAdmissionsBot.Models.Bot;
 using ElkollegeAdmissionsBot.Models.Database;
 using Microsoft.Data.Sqlite;
 
@@ -57,7 +57,7 @@ public class DatabaseManager
                 cancellationToken: cancellationToken));
     }
 
-    public async Task<DatabaseState> GetStateAsync(long userId, MessengerType messengerType,
+    public async Task<DatabaseState> GetStateAsync(long userId, BotMessengerType messengerType,
         CancellationToken cancellationToken = default)
     {
         await using var connection = new SqliteConnection(_sqliteConnectionString);

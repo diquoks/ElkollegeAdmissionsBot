@@ -1,6 +1,5 @@
 using ElkollegeAdmissionsBot.Extensions;
 using ElkollegeAdmissionsBot.Helpers;
-using ElkollegeAdmissionsBot.Models;
 using ElkollegeAdmissionsBot.Models.Bot;
 using Max.Bot.Polling;
 using Max.Bot.Types.Enums;
@@ -82,7 +81,7 @@ public class MaxBot(
                     chatId: chatId,
                     menu: BotMenus.Start(
                         botName: _botUser.FullName,
-                        addCustomQuestionButton: !interconnectionService.IsInAdminGroup(MessengerType.Max, chatId)),
+                        addCustomQuestionButton: !interconnectionService.IsInAdminGroup(BotMessengerType.Max, chatId)),
                     cancellationToken: cancellationToken);
             default:
                 return Task.CompletedTask;
