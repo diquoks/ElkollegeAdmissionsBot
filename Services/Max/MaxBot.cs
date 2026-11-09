@@ -9,11 +9,12 @@ namespace ElkollegeAdmissionsBot.Services.Max;
 
 public class MaxBot(
     ILogger<MaxBot> logger,
+    FaqProvider faqProvider,
     DatabaseManager databaseManager,
     MaxBotClient client,
     InterconnectionService interconnectionService) : UpdateHandlerBase, IBot
 {
-    private readonly BotHandler _handler = new(logger, databaseManager, client, interconnectionService);
+    private readonly BotHandler _handler = new(logger, faqProvider, databaseManager, client, interconnectionService);
 
     private BotUser _botUser = null!;
 
@@ -81,6 +82,7 @@ public class MaxBot(
                     chatId: chatId,
                     menu: BotMenus.Start(
                         botName: _botUser.FullName,
+                        faqTopics: faqProvider.Faq.Topics,
                         addCustomQuestionButton: !interconnectionService.IsInAdminGroup(BotMessengerType.Max, chatId)),
                     cancellationToken: cancellationToken);
             default:

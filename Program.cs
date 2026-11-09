@@ -10,9 +10,11 @@ public static class Program
     {
         var builder = Host.CreateApplicationBuilder(args);
         builder.Services
-            .Configure<MaxBotClientOptions>(builder.Configuration.GetSection(MaxBotClientOptions.Section))
-            .Configure<TelegramBotClientOptions>(builder.Configuration.GetSection(TelegramBotClientOptions.Section));
+            .Configure<AssetsOptions>(builder.Configuration.GetSection(AssetsOptions.SectionKey))
+            .Configure<MaxBotClientOptions>(builder.Configuration.GetSection(MaxBotClientOptions.SectionKey))
+            .Configure<TelegramBotClientOptions>(builder.Configuration.GetSection(TelegramBotClientOptions.SectionKey));
         builder.Services
+            .AddSingleton<FaqProvider>()
             .AddSingleton<DatabaseManager>()
             .AddSingleton<MaxBotClient>()
             .AddSingleton<TelegramBotClient>()

@@ -5,6 +5,7 @@ namespace ElkollegeAdmissionsBot.Services;
 
 public partial class BotHandler(
     ILogger logger,
+    FaqProvider faqProvider,
     DatabaseManager databaseManager,
     IBotClient client,
     InterconnectionService interconnectionService)

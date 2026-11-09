@@ -18,6 +18,7 @@ public partial class BotHandler
                     chatId: message.ChatId,
                     menu: BotMenus.Start(
                         botName: _botUser.FullName,
+                        faqTopics: faqProvider.Faq.Topics,
                         addCustomQuestionButton: !interconnectionService.IsInAdminGroup(message)),
                     cancellationToken: cancellationToken);
             default:

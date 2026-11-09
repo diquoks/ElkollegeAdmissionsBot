@@ -12,14 +12,22 @@ public partial class BotHandler
     {
         logger.LogBotCallbackQuery(callbackQuery);
 
+        if (callbackQuery.Data is CallbackStrings.JustAnswer)
+        {
+            await client.AnswerCallbackQueryAsync(
+                callbackQueryId: callbackQuery.Id,
+                cancellationToken: cancellationToken);
+            return;
+        }
+
         var state = await databaseManager.GetStateAsync(
             userId: callbackQuery.From.Id,
             messengerType: callbackQuery.MessengerType,
             cancellationToken: cancellationToken);
 
-        switch (callbackQuery.Data)
+        switch (callbackQuery.Data.Split())
         {
-            case CallbackStrings.Start:
+            case [CallbackStrings.Start]:
             {
                 state.Clear();
 
@@ -28,17 +36,52 @@ public partial class BotHandler
                     messageId: callbackQuery.MessageId,
                     menu: BotMenus.Start(
                         botName: _botUser.FullName,
+                        faqTopics: faqProvider.Faq.Topics,
                         addCustomQuestionButton: !interconnectionService.IsInAdminGroup(callbackQuery)),
                     cancellationToken: cancellationToken);
                 break;
             }
-            case CallbackStrings.AskCustomQuestion:
+            case [CallbackStrings.Topic, var key]:
             {
-                state.Type = StateType.CustomQuestion;
+                var faqTopic = faqProvider.Faq.Topics.GetValueOrDefault(key);
+
+                if (faqTopic is null)
+                    break;
 
                 await client.EditMessageTextAsync(
                     chatId: callbackQuery.ChatId,
                     messageId: callbackQuery.MessageId,
+                    menu: BotMenus.Topic(
+                        faqTopic: faqTopic,
+                        faqTopicKey: key,
+                        faqSections: faqProvider.Faq.Sections
+                            .Where(pair => faqTopic.Sections.Contains(pair.Key))
+                            .ToDictionary()),
+                    cancellationToken: cancellationToken);
+                break;
+            }
+            case [CallbackStrings.Section, var topicKey, var key]:
+            {
+                var faqSection = faqProvider.Faq.Sections.GetValueOrDefault(key);
+
+                if (faqSection is null)
+                    break;
+
+                await client.EditMessageTextAsync(
+                    chatId: callbackQuery.ChatId,
+                    messageId: callbackQuery.MessageId,
+                    menu: BotMenus.Section(
+                        faqSection: faqSection,
+                        faqTopicKey: topicKey),
+                    cancellationToken: cancellationToken);
+                break;
+            }
+            case [CallbackStrings.AskCustomQuestion]:
+            {
+                state.Type = StateType.CustomQuestion;
+
+                await client.SendMessageAsync(
+                    chatId: callbackQuery.ChatId,
                     menu: BotMenus.AskCustomQuestion,
                     cancellationToken: cancellationToken);
                 break;

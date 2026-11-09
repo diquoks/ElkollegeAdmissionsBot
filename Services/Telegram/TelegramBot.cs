@@ -9,11 +9,12 @@ namespace ElkollegeAdmissionsBot.Services.Telegram;
 
 public class TelegramBot(
     ILogger<TelegramBot> logger,
+    FaqProvider faqProvider,
     DatabaseManager databaseManager,
     TelegramBotClient client,
     InterconnectionService interconnectionService) : SimpleUpdateHandlerBase, IBot
 {
-    private readonly BotHandler _handler = new(logger, databaseManager, client, interconnectionService);
+    private readonly BotHandler _handler = new(logger, faqProvider, databaseManager, client, interconnectionService);
 
     public async Task PrepareAsync(CancellationToken cancellationToken = default)
     {
