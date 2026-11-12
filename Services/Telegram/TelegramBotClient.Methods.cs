@@ -12,22 +12,22 @@ public partial class TelegramBotClient
     public async Task<BotUser> GetMeAsync(CancellationToken cancellationToken = default) =>
         BotUser.FromTelegram(await Implementation.GetMeAsync(cancellationToken));
 
-    public Task SetMyCommandsAsync(BotCommand[] commands, CancellationToken cancellationToken = default) =>
-        Implementation.SetMyCommandsAsync(
+    public async Task SetMyCommandsAsync(BotCommand[] commands, CancellationToken cancellationToken = default) =>
+        await Implementation.SetMyCommandsAsync(
             commands: commands.Select(command => command.ToTelegram()),
             scope: new BotCommandScopeAllPrivateChats(),
             cancellationToken: cancellationToken);
 
-    public Task<BotMessage> SendMessageAsync(long chatId, BotMenu menu,
+    public async Task<BotMessage> SendMessageAsync(long chatId, BotMenu menu,
         CancellationToken cancellationToken = default) =>
-        InternalSendMessageAsync(
+        await InternalSendMessageAsync(
             chatId: chatId,
             menu: menu,
             cancellationToken: cancellationToken);
 
-    public Task SendReplyAsync(long chatId, string messageId, BotMenu menu,
+    public async Task SendReplyAsync(long chatId, string messageId, BotMenu menu,
         CancellationToken cancellationToken = default) =>
-        InternalSendMessageAsync(
+        await InternalSendMessageAsync(
             chatId: chatId,
             menu: menu,
             messageId: int.Parse(messageId),
@@ -44,12 +44,12 @@ public partial class TelegramBotClient
                 replyMarkup: menu.Keyboard?.ToTelegram(),
                 cancellationToken: cancellationToken));
 
-    public Task EditMessageTextAsync(long chatId, string messageId, BotMenu menu,
+    public async Task EditMessageTextAsync(long chatId, string messageId, BotMenu menu,
         CancellationToken cancellationToken = default)
     {
         try
         {
-            return Implementation.EditMessageTextAsync(
+            await Implementation.EditMessageTextAsync(
                 chatId: chatId,
                 messageId: int.Parse(messageId),
                 text: menu.Text,
@@ -59,15 +59,15 @@ public partial class TelegramBotClient
         }
         catch
         {
-            return SendMessageAsync(
+            await SendMessageAsync(
                 chatId: chatId,
                 menu: menu,
                 cancellationToken: cancellationToken);
         }
     }
 
-    public Task AnswerCallbackQueryAsync(string callbackQueryId, CancellationToken cancellationToken = default) =>
-        Implementation.AnswerCallbackQueryAsync(
+    public async Task AnswerCallbackQueryAsync(string callbackQueryId, CancellationToken cancellationToken = default) =>
+        await Implementation.AnswerCallbackQueryAsync(
             callbackQueryId: callbackQueryId,
             cancellationToken: cancellationToken);
 }

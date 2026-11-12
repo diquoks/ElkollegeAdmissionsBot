@@ -36,8 +36,8 @@ public partial class BotHandler
                     messageId: callbackQuery.MessageId,
                     menu: BotMenus.Start(
                         botName: _botUser.FullName,
-                        faqTopics: faqProvider.Faq.Topics,
-                        addCustomQuestionButton: !interconnectionService.IsInAdminGroup(callbackQuery)),
+                        addCustomQuestionButton: !interconnectionService.IsInAdminGroup(callbackQuery),
+                        faqTopics: faqProvider.Faq.Topics),
                     cancellationToken: cancellationToken);
                 break;
             }

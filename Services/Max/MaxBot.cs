@@ -21,53 +21,60 @@ public class MaxBot(
     public async Task PrepareAsync(CancellationToken cancellationToken = default) =>
         _botUser = await _handler.PrepareAsync(cancellationToken);
 
-    public override Task HandleMessageAsync(UpdateContext context, CancellationToken cancellationToken)
+    public override async Task HandleMessageAsync(UpdateContext context, CancellationToken cancellationToken)
     {
         if (context.Update.Message is not { } message ||
             string.IsNullOrWhiteSpace(message.Mid) ||
             message.Recipient.ChatId is null ||
             message.Sender is null ||
             string.IsNullOrWhiteSpace(message.Text))
-            return Task.CompletedTask;
+            return;
 
         if (BotCommandParser.TryParse(message.Text, out var result))
         {
             if (message.Recipient.ChatType is ChatType.Dialog)
-                return _handler.OnCommandAsync(BotMessage.FromMax(message), result.commandName, cancellationToken);
+            {
+                await _handler.OnCommandAsync(BotMessage.FromMax(message), result.commandName, cancellationToken);
+                return;
+            }
 
             if (string.IsNullOrWhiteSpace(result.username) || result.username != _botUser.Username)
-                return Task.CompletedTask;
+                return;
 
-            return _handler.OnCommandAsync(BotMessage.FromMax(message), result.commandName, cancellationToken);
+            await _handler.OnCommandAsync(BotMessage.FromMax(message), result.commandName, cancellationToken);
+            return;
         }
 
         if (message.Recipient.ChatType is ChatType.Dialog)
-            return _handler.OnMessageAsync(BotMessage.FromMax(message), cancellationToken);
+        {
+            await _handler.OnMessageAsync(BotMessage.FromMax(message), cancellationToken);
+            return;
+        }
 
         if (message.Link?.Type is not MessageLinkType.Reply ||
             message.Link.Sender?.Id is not { } senderId ||
             senderId != _botUser.Id)
-            return Task.CompletedTask;
+            return;
 
-        return _handler.OnMessageAsync(BotMessage.FromMax(message), cancellationToken);
+        await _handler.OnMessageAsync(BotMessage.FromMax(message), cancellationToken);
     }
 
-    public override Task HandleCallbackQueryAsync(UpdateContext context, CancellationToken cancellationToken)
+    public override async Task HandleCallbackQueryAsync(UpdateContext context, CancellationToken cancellationToken)
     {
         if (context.Update.Callback is not { } callbackQuery ||
             string.IsNullOrWhiteSpace(callbackQuery.Payload) ||
             context.Update.Message is not { } message ||
             string.IsNullOrWhiteSpace(message.Mid) ||
             message.Recipient.ChatId is null)
-            return Task.CompletedTask;
+            return;
 
-        return _handler.OnCallbackQueryAsync(BotCallbackQuery.FromMax(callbackQuery, message), cancellationToken);
+        await _handler.OnCallbackQueryAsync(BotCallbackQuery.FromMax(callbackQuery, message), cancellationToken);
     }
 
-    public override Task HandleUpdateAsync(UpdateContext context, CancellationToken cancellationToken)
+    public override async Task HandleUpdateAsync(UpdateContext context, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(context.Update.UpdateTypeRaw))
-            return Task.CompletedTask;
+            return;
 
         var chatId = context.Update.ChatId!.Value;
 
@@ -78,15 +85,16 @@ public class MaxBot(
         switch (context.Update.Type)
         {
             case UpdateType.BotStarted:
-                return client.SendMessageAsync(
+            {
+                await client.SendMessageAsync(
                     chatId: chatId,
                     menu: BotMenus.Start(
                         botName: _botUser.FullName,
-                        faqTopics: faqProvider.Faq.Topics,
-                        addCustomQuestionButton: !interconnectionService.IsInAdminGroup(BotMessengerType.Max, chatId)),
+                        addCustomQuestionButton: !interconnectionService.IsInAdminGroup(BotMessengerType.Max, chatId),
+                        faqTopics: faqProvider.Faq.Topics),
                     cancellationToken: cancellationToken);
-            default:
-                return Task.CompletedTask;
+                break;
+            }
         }
     }
 }

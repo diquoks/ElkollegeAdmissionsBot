@@ -9,21 +9,21 @@ public partial class MaxBotClient
     public async Task<BotUser> GetMeAsync(CancellationToken cancellationToken = default) =>
         BotUser.FromMax(await Implementation.Bot.GetMeAsync(cancellationToken));
 
-    public Task SetMyCommandsAsync(BotCommand[] commands, CancellationToken cancellationToken = default) =>
-        Implementation.Bot.SetCommandsAsync(
+    public async Task SetMyCommandsAsync(BotCommand[] commands, CancellationToken cancellationToken = default) =>
+        await Implementation.Bot.SetCommandsAsync(
             commands: commands.Select(command => command.ToMax()),
             cancellationToken: cancellationToken);
 
-    public Task<BotMessage> SendMessageAsync(long chatId, BotMenu menu,
+    public async Task<BotMessage> SendMessageAsync(long chatId, BotMenu menu,
         CancellationToken cancellationToken = default) =>
-        InternalSendMessageAsync(
+        await InternalSendMessageAsync(
             chatId: chatId,
             menu: menu,
             cancellationToken: cancellationToken);
 
-    public Task SendReplyAsync(long chatId, string messageId, BotMenu menu,
+    public async Task SendReplyAsync(long chatId, string messageId, BotMenu menu,
         CancellationToken cancellationToken = default) =>
-        InternalSendMessageAsync(
+        await InternalSendMessageAsync(
             chatId: chatId,
             menu: menu,
             messageId: messageId,
@@ -45,12 +45,12 @@ public partial class MaxBotClient
                 chatId: chatId,
                 cancellationToken: cancellationToken));
 
-    public Task EditMessageTextAsync(long chatId, string messageId, BotMenu menu,
+    public async Task EditMessageTextAsync(long chatId, string messageId, BotMenu menu,
         CancellationToken cancellationToken = default)
     {
         try
         {
-            return Implementation.Messages.EditMessageAsync(
+            await Implementation.Messages.EditMessageAsync(
                 messageId: messageId,
                 request: new EditMessageRequest
                 {
@@ -62,13 +62,15 @@ public partial class MaxBotClient
         }
         catch
         {
-            return SendMessageAsync(
+            await SendMessageAsync(
                 chatId: chatId,
                 menu: menu,
                 cancellationToken: cancellationToken);
         }
     }
 
-    public Task AnswerCallbackQueryAsync(string callbackQueryId, CancellationToken cancellationToken = default) =>
-        Task.CompletedTask;
+    // ReSharper disable once AsyncMethodWithoutAwait
+    public async Task AnswerCallbackQueryAsync(string callbackQueryId, CancellationToken cancellationToken = default)
+    {
+    }
 }

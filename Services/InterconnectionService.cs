@@ -25,7 +25,7 @@ public class InterconnectionService(
             cancellationToken: cancellationToken);
     }
 
-    public Task SendAnswerFromAdminGroupAsync(DatabaseMessage databaseMessage, BotMenu menu,
+    public async Task SendAnswerFromAdminGroupAsync(DatabaseMessage databaseMessage, BotMenu menu,
         CancellationToken cancellationToken = default)
     {
         IBotClient client = databaseMessage.MessengerType switch
@@ -35,7 +35,7 @@ public class InterconnectionService(
             _ => throw new UnreachableException()
         };
 
-        return client.SendReplyAsync(
+        await client.SendReplyAsync(
             chatId: databaseMessage.OriginalChatId,
             messageId: databaseMessage.OriginalId,
             menu: menu,

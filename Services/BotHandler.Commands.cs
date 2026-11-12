@@ -6,7 +6,7 @@ namespace ElkollegeAdmissionsBot.Services;
 
 public partial class BotHandler
 {
-    public Task OnCommandAsync(BotMessage message, string commandName,
+    public async Task OnCommandAsync(BotMessage message, string commandName,
         CancellationToken cancellationToken = default)
     {
         logger.LogBotMessage(message);
@@ -14,15 +14,16 @@ public partial class BotHandler
         switch (commandName)
         {
             case BotCommands.StartCommand:
-                return client.SendMessageAsync(
+            {
+                await client.SendMessageAsync(
                     chatId: message.ChatId,
                     menu: BotMenus.Start(
                         botName: _botUser.FullName,
-                        faqTopics: faqProvider.Faq.Topics,
-                        addCustomQuestionButton: !interconnectionService.IsInAdminGroup(message)),
+                        addCustomQuestionButton: !interconnectionService.IsInAdminGroup(message),
+                        faqTopics: faqProvider.Faq.Topics),
                     cancellationToken: cancellationToken);
-            default:
-                return Task.CompletedTask;
+                break;
+            }
         }
     }
 }
