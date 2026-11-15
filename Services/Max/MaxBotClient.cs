@@ -43,7 +43,9 @@ public partial class MaxBotClient : IBotClient, IDisposable
         AdminGroupId = options.Value.AdminGroupId;
     }
 
-    // disables certificates validation
+    // TODO: disables certificates validation for cases where trusted certificates for requests to MAX aren't installed.
+    //       maybe it would be worth providing a way to include such certificates into the Docker image for better
+    //       security, while keeping the current approach for local development and testing only
     private static HttpClientHandler UnvalidatedHttpClientHandler => new()
     {
         ServerCertificateCustomValidationCallback = (_, _, _, _) => true
