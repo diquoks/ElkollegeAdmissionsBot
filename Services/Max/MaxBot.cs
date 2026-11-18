@@ -1,5 +1,4 @@
 using ElkollegeAdmissionsBot.Extensions;
-using ElkollegeAdmissionsBot.Helpers;
 using ElkollegeAdmissionsBot.Models.Bot;
 using Max.Bot.Polling;
 using Max.Bot.Types.Enums;
@@ -73,26 +72,20 @@ public class MaxBot(
 
     public override async Task HandleUpdateAsync(UpdateContext context, CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(context.Update.UpdateTypeRaw))
+        if (string.IsNullOrWhiteSpace(context.Update.UpdateTypeRaw) ||
+            context.Update.ChatId is null ||
+            context.Update.User is null)
             return;
 
-        var chatId = context.Update.ChatId!.Value;
+        var update = BotUpdate.FromMax(context.Update);
 
-        logger.LogBotInteraction(
-            user: BotUser.FromMax(context.Update.User!),
-            interaction: context.Update.UpdateTypeRaw);
+        logger.LogBotInteraction(update.From, context.Update.UpdateTypeRaw, update.ChatId);
 
         switch (context.Update.Type)
         {
             case UpdateType.BotStarted:
             {
-                await client.SendMessageAsync(
-                    chatId: chatId,
-                    menu: BotMenus.Start(
-                        botName: _botUser.FullName,
-                        addCustomQuestionButton: !interconnectionService.IsInAdminGroup(BotMessengerType.Max, chatId),
-                        faqTopics: faqProvider.Faq.Topics),
-                    cancellationToken: cancellationToken);
+                await _handler.HandleStartCommandAsync(update, cancellationToken);
                 break;
             }
         }

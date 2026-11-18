@@ -4,27 +4,31 @@ using TelegramCallbackQuery = Telegram.BotAPI.AvailableTypes.CallbackQuery;
 
 namespace ElkollegeAdmissionsBot.Models.Bot;
 
-public record BotCallbackQuery(
-    string Id,
-    string Data,
-    BotMessengerType MessengerType,
-    BotUser From,
-    string MessageId,
-    long ChatId)
+public record BotCallbackQuery : BotUpdate
 {
-    public static BotCallbackQuery FromMax(MaxCallbackQuery callbackQuery, MaxMessage message) => new(
-        Id: callbackQuery.CallbackId,
-        Data: callbackQuery.Payload!,
-        MessengerType: BotMessengerType.Max,
-        From: BotUser.FromMax(callbackQuery.User),
-        MessageId: message.Mid!,
-        ChatId: message.Recipient.ChatId!.Value);
+    public required string Id { get; init; }
 
-    public static BotCallbackQuery FromTelegram(TelegramCallbackQuery callbackQuery) => new(
-        Id: callbackQuery.Id,
-        Data: callbackQuery.Data!,
-        MessengerType: BotMessengerType.Telegram,
-        From: BotUser.FromTelegram(callbackQuery.From),
-        MessageId: callbackQuery.Message!.MessageId.ToString(),
-        ChatId: callbackQuery.Message.Chat.Id);
+    public required string Data { get; init; }
+
+    public required string MessageId { get; init; }
+
+    public static BotCallbackQuery FromMax(MaxCallbackQuery callbackQuery, MaxMessage message) => new()
+    {
+        Id = callbackQuery.CallbackId,
+        MessengerType = BotMessengerType.Max,
+        ChatId = message.Recipient.ChatId!.Value,
+        From = BotUser.FromMax(callbackQuery.User),
+        Data = callbackQuery.Payload!,
+        MessageId = message.Mid!
+    };
+
+    public static BotCallbackQuery FromTelegram(TelegramCallbackQuery callbackQuery) => new()
+    {
+        Id = callbackQuery.Id,
+        MessengerType = BotMessengerType.Telegram,
+        ChatId = callbackQuery.Message!.Chat.Id,
+        From = BotUser.FromTelegram(callbackQuery.From),
+        Data = callbackQuery.Data!,
+        MessageId = callbackQuery.Message.MessageId.ToString()
+    };
 }

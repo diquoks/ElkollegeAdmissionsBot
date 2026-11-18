@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using ElkollegeAdmissionsBot.Helpers;
 using ElkollegeAdmissionsBot.Models.Bot;
 using ElkollegeAdmissionsBot.Models.Database;
@@ -17,7 +16,8 @@ public class InterconnectionService(
     {
         var forwardedMessage = await maxClient.SendMessageAsync(
             chatId: maxClient.AdminGroupId,
-            menu: BotMenus.ForwardToAdminGroup(originalMessage),
+            menu: BotMenus.ForwardToAdminGroup(
+                message: originalMessage),
             cancellationToken: cancellationToken);
 
         await databaseManager.InsertMessageAsync(
@@ -28,11 +28,11 @@ public class InterconnectionService(
     public async Task SendAnswerFromAdminGroupAsync(DatabaseMessage databaseMessage, BotMenu menu,
         CancellationToken cancellationToken = default)
     {
-        IBotClient client = databaseMessage.MessengerType switch
+        IBotClient client = databaseMessage.OriginalMessengerType switch
         {
             BotMessengerType.Max => maxClient,
             BotMessengerType.Telegram => telegramClient,
-            _ => throw new UnreachableException()
+            _ => throw new ArgumentOutOfRangeException()
         };
 
         await client.SendReplyAsync(
@@ -42,12 +42,6 @@ public class InterconnectionService(
             cancellationToken: cancellationToken);
     }
 
-    public bool IsInAdminGroup(BotMessage message) =>
-        IsInAdminGroup(message.MessengerType, message.ChatId);
-
-    public bool IsInAdminGroup(BotCallbackQuery callbackQuery) =>
-        IsInAdminGroup(callbackQuery.MessengerType, callbackQuery.ChatId);
-
-    public bool IsInAdminGroup(BotMessengerType messengerType, long chatId) =>
-        messengerType is BotMessengerType.Max && chatId == maxClient.AdminGroupId;
+    public bool IsInAdminGroup(BotUpdate update) =>
+        update.MessengerType is BotMessengerType.Max && update.ChatId == maxClient.AdminGroupId;
 }

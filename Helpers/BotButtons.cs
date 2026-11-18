@@ -5,26 +5,37 @@ namespace ElkollegeAdmissionsBot.Helpers;
 
 public static class BotButtons
 {
+    public static BotCallbackButton Start => new(
+        "Главное меню",
+        CallbackStrings.StartCallback);
+
     public static BotCallbackButton Topic(string title, string key) => new(
         title,
         CallbackStrings.TopicCallback(key));
 
-    public static BotCallbackButton TopicCustomQuestion =>
-        InternalAskCustomQuestion("Нет нужной темы?");
-
-    public static BotCallbackButton Section(string title, string key, string topicKey) => new(
+    public static BotCallbackButton Section(string title, string topicKey, string key) => new(
         title,
-        CallbackStrings.SectionCallback(key, topicKey));
+        CallbackStrings.SectionCallback(topicKey, key));
 
     public static BotLinkButton SectionLink(FrequentlyAskedSectionLink faqSectionLink) => new(
         faqSectionLink.Title,
         faqSectionLink.Url);
 
-    public static BotCallbackButton SectionCustomQuestion =>
-        InternalAskCustomQuestion("Не нашли ответ?");
+    public static BotCallbackButton EllipsisJustAnswer => new(
+        "...",
+        CallbackStrings.JustAnswerCallback);
+
+    public static BotCallbackButton WriteCustomQuestion =>
+        InternalAskCustomQuestion("Написать сообщение");
 
     public static BotCallbackButton AskCustomQuestion =>
         InternalAskCustomQuestion("Задать свой вопрос");
+
+    public static BotCallbackButton TopicCustomQuestion =>
+        InternalAskCustomQuestion("Нет нужной темы?");
+
+    public static BotCallbackButton SectionCustomQuestion =>
+        InternalAskCustomQuestion("Не нашли ответ?");
 
     public static BotCallbackButton ExpandCustomQuestion =>
         InternalAskCustomQuestion("Дополнить вопрос");
@@ -36,9 +47,9 @@ public static class BotButtons
         text,
         CallbackStrings.AskCustomQuestionCallback);
 
-    public static BotCallbackButton EllipsisJustAnswer => new(
-        "...",
-        CallbackStrings.JustAnswerCallback);
+    public static BotCallbackButton BlockUser(long targetUserId, BotMessengerType messengerType) => new(
+        "Заблокировать",
+        CallbackStrings.BlockUserCallback(targetUserId, messengerType));
 
     public static BotCallbackButton BackTo(string callback) => new(
         "Назад",

@@ -28,15 +28,17 @@ public class DatabaseManager
                 UserId        INTEGER NOT NULL,
                 MessengerType INTEGER NOT NULL,
                 Type          INTEGER NOT NULL,
+                IsBlocked     INTEGER NOT NULL,
                 PRIMARY KEY (UserId, MessengerType) ON CONFLICT REPLACE
             );
 
             CREATE TABLE IF NOT EXISTS messages (
-                Id             TEXT    NOT NULL PRIMARY KEY,
-                MessengerType  INTEGER NOT NULL,
-                OriginalId     TEXT    NOT NULL,
-                OriginalChatId INTEGER NOT NULL,
-                UNIQUE (MessengerType, OriginalId, OriginalChatId) ON CONFLICT REPLACE
+                Id                    TEXT    NOT NULL PRIMARY KEY,
+                OriginalId            TEXT    NOT NULL,
+                OriginalMessengerType INTEGER NOT NULL,
+                OriginalChatId        INTEGER NOT NULL,
+                OriginalFromId        INTEGER NOT NULL,
+                UNIQUE (OriginalId, OriginalMessengerType, OriginalChatId, OriginalFromId) ON CONFLICT REPLACE
             );
             """);
     }
@@ -49,8 +51,8 @@ public class DatabaseManager
         return await connection.QuerySingleAsync<DatabaseState>(
             new CommandDefinition(
                 """
-                INSERT INTO states (UserId, MessengerType, Type)
-                VALUES (@UserId, @MessengerType, @Type)
+                INSERT INTO states (UserId, MessengerType, Type, IsBlocked)
+                VALUES (@UserId, @MessengerType, @Type, @IsBlocked)
                 RETURNING *;
                 """,
                 state,
@@ -80,8 +82,8 @@ public class DatabaseManager
         await connection.QueryAsync(
             new CommandDefinition(
                 """
-                INSERT INTO messages (Id, MessengerType, OriginalId, OriginalChatId)
-                VALUES (@Id, @MessengerType, @OriginalId, @OriginalChatId);
+                INSERT INTO messages (Id, OriginalId, OriginalMessengerType, OriginalChatId, OriginalFromId)
+                VALUES (@Id, @OriginalId, @OriginalMessengerType, @OriginalChatId, @OriginalFromId);
                 """,
                 message,
                 cancellationToken: cancellationToken));

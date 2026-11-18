@@ -10,8 +10,11 @@ public record DatabaseState
 
     public StateType Type { get; set; } = StateType.Empty;
 
-    public void Clear() =>
-        Type = StateType.Empty;
+    public bool IsBlocked { get; private set; }
+
+    public void ResetType() => Type = StateType.Empty;
+
+    public void BlockUser() => IsBlocked = true;
 }
 
 public enum StateType

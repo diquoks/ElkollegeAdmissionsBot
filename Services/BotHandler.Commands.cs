@@ -15,15 +15,25 @@ public partial class BotHandler
         {
             case BotCommands.StartCommand:
             {
-                await client.SendMessageAsync(
-                    chatId: message.ChatId,
-                    menu: BotMenus.Start(
-                        botName: _botUser.FullName,
-                        addCustomQuestionButton: !interconnectionService.IsInAdminGroup(message),
-                        faqTopics: faqProvider.Faq.Topics),
-                    cancellationToken: cancellationToken);
+                await HandleStartCommandAsync(message, cancellationToken);
                 break;
             }
         }
+    }
+
+    public async Task HandleStartCommandAsync(BotUpdate update, CancellationToken cancellationToken = default)
+    {
+        var state = await databaseManager.GetStateAsync(
+            userId: update.From.Id,
+            messengerType: update.MessengerType,
+            cancellationToken: cancellationToken);
+
+        await client.SendMessageAsync(
+            chatId: update.ChatId,
+            menu: BotMenus.Start(
+                botName: _botUser.FullName,
+                faqTopics: faqProvider.Faq.Topics,
+                withCustomQuestionButton: !(interconnectionService.IsInAdminGroup(update) || state.IsBlocked)),
+            cancellationToken: cancellationToken);
     }
 }
